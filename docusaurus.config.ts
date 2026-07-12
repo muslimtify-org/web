@@ -83,7 +83,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/rizukirr/muslimtify/discussions',
+          href: 'https://discord.gg/xYmgKyVb',
           label: 'Community',
           position: 'left',
         },
@@ -114,8 +114,8 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Discussions',
-              href: 'https://github.com/rizukirr/muslimtify/discussions',
+              label: 'Discord',
+              href: 'https://discord.gg/xYmgKyVb',
             },
             {
               label: 'Contribute',
