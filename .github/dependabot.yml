@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # Keep Docusaurus, React, and other npm deps current.
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      docusaurus:
+        patterns:
+          - "@docusaurus/*"
+
+  # Keep the GitHub Actions in the workflows above up to date.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

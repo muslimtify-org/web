@@ -16,13 +16,13 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://rizukirr.github.io',
+  url: 'https://muslimtify-org.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
-  baseUrl: '/',
+  baseUrl: '/web/',
 
   // GitHub pages deployment config.
-  organizationName: 'rizukirr',
-  projectName: 'muslimtify-web',
+  organizationName: 'muslimtify-org',
+  projectName: 'web',
 
   onBrokenLinks: 'throw',
   // The landing page uses section-id anchors (e.g. #install) for in-page
@@ -40,7 +40,7 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          editUrl: 'https://github.com/rizukirr/muslimtify-web/tree/main/',
+          editUrl: 'https://github.com/muslimtify-org/web/tree/main/',
           // Keep internal design specs out of the published docs sidebar.
           exclude: ['**/specs/**'],
         },
@@ -50,7 +50,7 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          editUrl: 'https://github.com/rizukirr/muslimtify-web/tree/main/',
+          editUrl: 'https://github.com/muslimtify-org/web/tree/main/',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
