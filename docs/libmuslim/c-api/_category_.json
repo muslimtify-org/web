@@ -1,0 +1,9 @@
+{
+  "label": "C API",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "title": "libmuslim C API",
+    "description": "Reference for the native C interface of libmuslim: how to include it, a working example, and every public type and function."
+  }
+}

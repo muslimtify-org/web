@@ -1,0 +1,346 @@
+/**
+ * Landing page styles. The landing deliberately commits to the dark
+ * night-sea world regardless of the site's light/dark toggle, so colors
+ * here are hard-set from the --mt-* night tokens (defined in custom.css).
+ */
+
+.landing {
+  --serif: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia,
+    'Times New Roman', serif;
+  --fs-hero: clamp(2.5rem, 5.6vw, 4.5rem);
+  --fs-h2: clamp(1.9rem, 3.4vw, 2.7rem);
+  --maxw: 1160px;
+
+  background: var(--mt-abyss);
+  color: var(--mt-star);
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--mt-gold);
+}
+
+.landing :is(h1, h2, h3) {
+  font-family: var(--serif);
+  color: var(--mt-heading);
+  text-wrap: balance;
+  font-weight: 600;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 15% 62%, rgba(5, 10, 23, 0.72), rgba(5, 10, 23, 0) 60%),
+    linear-gradient(to top, rgba(5, 10, 23, 0.85), rgba(5, 10, 23, 0) 42%);
+}
+.heroInner {
+  position: relative;
+  z-index: 5;
+  padding: 96px 0 120px;
+  max-width: 680px;
+}
+.heroTitle {
+  font-size: var(--fs-hero);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+.accent {
+  color: var(--mt-gold-soft);
+}
+.lede {
+  font-size: clamp(1.05rem, 1.7vw, 1.25rem);
+  color: var(--mt-star);
+  opacity: 0.9;
+  margin: 22px 0 0;
+  max-width: 34em;
+  text-shadow: 0 1px 18px rgba(5, 10, 23, 0.7);
+}
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 34px;
+  align-items: center;
+}
+.btnPrimary,
+.btnGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.98rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.btnPrimary {
+  background: var(--mt-gold);
+  color: #1a1405;
+  box-shadow: 0 0 26px rgba(233, 200, 119, 0.32);
+}
+.btnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 34px rgba(233, 200, 119, 0.42);
+  color: #1a1405;
+  text-decoration: none;
+}
+.btnGhost {
+  background: rgba(215, 225, 244, 0.06);
+  color: var(--mt-star);
+  border-color: var(--mt-line);
+}
+.btnGhost:hover {
+  transform: translateY(-2px);
+  border-color: rgba(215, 225, 244, 0.3);
+  background: rgba(215, 225, 244, 0.1);
+  color: var(--mt-star);
+  text-decoration: none;
+}
+.heroNote {
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--mt-muted);
+  letter-spacing: 0.02em;
+}
+.dot {
+  color: var(--mt-gold);
+  margin: 0 8px;
+}
+
+/* ---------- SECTIONS ---------- */
+.section,
+.sectionAlt {
+  position: relative;
+  padding: 96px 0;
+}
+.section {
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(215, 225, 244, 0.5), transparent),
+    radial-gradient(1px 1px at 70% 20%, rgba(215, 225, 244, 0.35), transparent),
+    radial-gradient(1.2px 1.2px at 85% 65%, rgba(215, 225, 244, 0.4), transparent),
+    radial-gradient(1px 1px at 35% 80%, rgba(215, 225, 244, 0.3), transparent),
+    radial-gradient(1px 1px at 55% 50%, rgba(233, 200, 119, 0.35), transparent),
+    linear-gradient(to bottom, var(--mt-abyss), var(--mt-deep) 55%, var(--mt-abyss));
+}
+.sectionAlt {
+  background: linear-gradient(to bottom, var(--mt-abyss), var(--mt-deep));
+}
+.sectionHead {
+  max-width: 640px;
+  margin-bottom: 52px;
+}
+.sectionHead h2 {
+  font-size: var(--fs-h2);
+  margin: 14px 0 0;
+  line-height: 1.12;
+}
+.sectionHead p {
+  color: var(--mt-muted);
+  margin: 14px 0 0;
+  font-size: 1.05rem;
+}
+
+/* ---------- FEATURES ---------- */
+.featGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .featGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  .featGrid {
+    grid-template-columns: 1fr;
+  }
+}
+.card {
+  background: var(--mt-card);
+  border: 1px solid var(--mt-card-line);
+  border-radius: 16px;
+  padding: 26px 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(233, 200, 119, 0.35);
+}
+.cardIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(233, 200, 119, 0.06);
+  border: 1px solid rgba(233, 200, 119, 0.25);
+  margin-bottom: 18px;
+}
+.cardIcon img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.card h3 {
+  font-size: 1.2rem;
+  margin: 0 0 8px;
+}
+.card p {
+  margin: 0;
+  color: var(--mt-muted);
+  font-size: 0.96rem;
+}
+
+/* ---------- INSTALL ---------- */
+.installGrid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 48px;
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .installGrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+.term {
+  background: #060d1e;
+  border: 1px solid var(--mt-card-line);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.8);
+}
+.termBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--mt-card-line);
+  background: rgba(255, 255, 255, 0.02);
+}
+.termDot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #2a3a58;
+}
+.termTitle {
+  margin-left: 10px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.78rem;
+  color: var(--mt-muted);
+}
+.copyBtn {
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--mt-star);
+  background: rgba(215, 225, 244, 0.08);
+  border: 1px solid var(--mt-card-line);
+  border-radius: 7px;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.copyBtn:hover {
+  background: rgba(233, 200, 119, 0.12);
+  border-color: rgba(233, 200, 119, 0.4);
+  color: var(--mt-gold);
+}
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 12px 0;
+  flex-wrap: wrap;
+}
+.tab {
+  font-size: 0.8rem;
+  padding: 7px 14px;
+  border-radius: 8px 8px 0 0;
+  color: var(--mt-muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  background: transparent;
+}
+.tabActive {
+  color: var(--mt-gold);
+  background: rgba(233, 200, 119, 0.08);
+  border-color: var(--mt-card-line);
+}
+.termBody {
+  padding: 20px 22px 26px;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.9rem;
+  line-height: 1.9;
+}
+.termBody pre {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  white-space: pre-wrap;
+  font-size: inherit;
+}
+.cmt {
+  color: #56698c;
+}
+.prompt {
+  color: var(--mt-foam);
+}
+.cmd {
+  color: var(--mt-star);
+}
+
+/* ---------- COMMUNITY BAND ---------- */
+.community {
+  position: relative;
+  padding: 88px 0;
+  text-align: center;
+  background:
+    radial-gradient(60% 120% at 50% 0%, rgba(233, 200, 119, 0.1), transparent 60%),
+    linear-gradient(to bottom, var(--mt-deep), var(--mt-abyss));
+  border-top: 1px solid var(--mt-line);
+  border-bottom: 1px solid var(--mt-line);
+}
+.community h2 {
+  font-size: var(--fs-h2);
+  margin: 12px auto 0;
+  max-width: 16em;
+}
+.community p {
+  color: var(--mt-muted);
+  max-width: 40em;
+  margin: 16px auto 0;
+  font-size: 1.06rem;
+}
+.community .ctaRow {
+  justify-content: center;
+  margin-top: 32px;
+}
