@@ -219,7 +219,7 @@ function Community() {
         <div className={styles.ctaRow}>
           <Link
             className={styles.btnPrimary}
-            to="https://discord.gg/S4n7EcSext">
+            to="https://discord.gg/tpNZBXmKpd">
             💬 Discord
           </Link>
           <Link
