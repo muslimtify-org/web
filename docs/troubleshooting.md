@@ -83,4 +83,4 @@ defaults the next time you change a setting.
 
 - Open an issue: [GitHub Issues](https://github.com/rizukirr/muslimtify/issues)
 - Ask the community: [GitHub Discussions](https://github.com/rizukirr/muslimtify/discussions)
-- Join the [Discord server](https://discord.gg/xYmgKyVb)
+- Join the [Discord server](https://discord.gg/S4n7EcSext)
