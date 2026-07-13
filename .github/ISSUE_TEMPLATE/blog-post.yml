@@ -1,0 +1,40 @@
+name: ✍️ Blog post idea
+description: Propose a new blog post or report an issue with an existing one.
+title: "blog: <short title>"
+labels: ["blog"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Blog posts live in `blog/` and are open for pull requests — see [CONTRIBUTING.md](https://github.com/muslimtify-org/web/blob/main/CONTRIBUTING.md).
+        Use this issue to discuss an idea first, or to report a problem with an existing post.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is this about?
+      options:
+        - I want to propose / write a new post
+        - I found a problem in an existing post
+    validations:
+      required: true
+  - type: input
+    id: topic
+    attributes:
+      label: Topic / post title
+      placeholder: e.g. Integrate Muslimtify with Waybar
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Outline the post, or describe the problem and the fix.
+    validations:
+      required: true
+  - type: checkboxes
+    id: policy
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I have read the AI Usage Policy and will disclose any AI assistance.
+          required: true
