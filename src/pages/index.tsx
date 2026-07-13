@@ -214,14 +214,13 @@ function Community() {
         <p>
           Muslimtify is built in the open by and for the ummah. Whether you write C, test
           on a new distro, translate, or just share ideas, there is a place for you
-          aboard. And we are still looking for brothers and sisters with a Mac to help us
-          reach macOS.
+          aboard.
         </p>
         <div className={styles.ctaRow}>
           <Link
             className={styles.btnPrimary}
-            to="https://github.com/rizukirr/muslimtify/discussions">
-            💬 Discussions
+            to="https://discord.gg/xYmgKyVb">
+            💬 Discord
           </Link>
           <Link
             className={styles.btnGhost}
