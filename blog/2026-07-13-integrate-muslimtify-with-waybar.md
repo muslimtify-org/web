@@ -6,7 +6,7 @@ authors:
 tags: [muslimtify, linux, waybar, wayland]
 ---
 
-<img width="1920" height="1080" alt="2026-07-13-135546_hyprshot" src="https://github.com/user-attachments/assets/1015c250-6262-4071-a0a5-d0e4c30a6c69" />
+<img width="1920" height="1080" alt="2026-07-13-135546_hyprshot" src="https://github.com/user-attachments/assets/1015c250-6262-4071-a0a5-d0e4c30a6c69" style={{height: 'auto'}} />
 
 If you're a Muslim using a tiling window manager on Linux, you've probably wished for a subtle, always-visible prayer time indicator on your status bar. In this article, I'll walk you through how I integrated Muslimtify, a prayer time notification tool, with Waybar, the popular status bar for Wayland compositors like Hyprland and Sway.
 
