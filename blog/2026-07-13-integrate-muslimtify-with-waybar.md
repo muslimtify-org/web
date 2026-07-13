@@ -232,26 +232,21 @@ Or if you're on Hyprland, you can simply reload your config.
 You should now see something like this on your bar:
 
 ```
-󱠧  Asr 15:23 | 󰔟 1:42
+󱠧  Asr 15:23 | 󰔟 00:42
 ```
 
 Hovering over it reveals the full prayer times table:
 
 ```
-Prayer Times for Saturday, February 28, 2026
-Location: Jakarta, Indonesia (-6.2088, 106.8456)
-
-┌────────────┬──────────┬──────────┬───────────────────────┐
-│ Prayer     │ Time     │ Status   │ Reminders             │
-├────────────┼──────────┼──────────┼───────────────────────┤
-│ Fajr       │ 04:38    │ Enabled  │ 10 min before         │
-│ Sunrise    │ 05:56    │ Disabled │ -                     │
-│ Dhuha      │ 06:19    │ Enabled  │ At prayer time        │
-│ Dhuhr      │ 12:05    │ Enabled  │ 10 min before         │
-│ Asr        │ 15:23    │ Enabled  │ 10 min before         │
-│ Maghrib    │ 18:12    │ Enabled  │ At prayer time        │
-│ Isha       │ 19:23    │ Enabled  │ 10 min before         │
-└────────────┴──────────┴──────────┴───────────────────────┘
+󰧧 Prayer Times
+====================
+󰖜 Fajr     04:38
+󰖙 Dhuhr    12:05
+󰖚 Asr      15:23 <-
+󰖛 Maghrib  18:12
+󰖔 Isha     19:23
+====================
+󰔟 Next: Asr in 00:42
 ```
 
 ## How It All Fits Together
