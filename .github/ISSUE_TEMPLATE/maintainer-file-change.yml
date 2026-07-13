@@ -1,0 +1,41 @@
+name: 🔒 Maintainer-only change request
+description: Request a change to the site itself (pages, components, styles, config, assets).
+title: "request: <short description>"
+labels: ["maintainer-review"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Files under `src/`, `static/`, `docusaurus.config.ts`, `sidebars.ts`, `package.json`,
+        `tsconfig.json`, and `.github/` are **maintainer-only**. Please do **not** open a pull
+        request for these — describe what you'd like changed here and a maintainer will take it on.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which area?
+      options:
+        - Custom page or React component (src/pages, src/components)
+        - Styling / CSS (src/css, *.module.css)
+        - Static asset (logo, favicon, image, font)
+        - Site config / navigation (docusaurus.config.ts, sidebars.ts)
+        - Build / tooling (package.json, tsconfig.json)
+        - CI / automation (.github/)
+        - Something else
+    validations:
+      required: true
+  - type: textarea
+    id: request
+    attributes:
+      label: What would you like changed, and why?
+      description: Describe the desired behavior or fix. Screenshots and links help.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I understand this is a maintainer-only area and I am requesting a change, not submitting one.
+          required: true
+        - label: I have read the AI Usage Policy.
+          required: true

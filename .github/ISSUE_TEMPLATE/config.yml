@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Muslimtify Community (Discord)
+    url: https://discord.com/invite/tpNZBXmKpd
+    about: Ask questions, get help, and discuss ideas with the community.
+  - name: 📖 Read the AI Usage Policy
+    url: https://github.com/muslimtify-org/web/blob/main/AI_POLICY.md
+    about: Please read this before contributing with AI assistance.
+  - name: 🤝 Contributing Guide
+    url: https://github.com/muslimtify-org/web/blob/main/CONTRIBUTING.md
+    about: How to contribute blog posts and documentation.

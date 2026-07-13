@@ -1,0 +1,39 @@
+name: 📖 Documentation issue
+description: Report an error, gap, or improvement for the docs.
+title: "docs: <short description>"
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Documentation lives in `docs/` and is open for pull requests — see [CONTRIBUTING.md](https://github.com/muslimtify-org/web/blob/main/CONTRIBUTING.md).
+        If you can fix it yourself, a PR is very welcome. Otherwise describe it here.
+  - type: input
+    id: page
+    attributes:
+      label: Which page?
+      description: Path or URL of the affected doc.
+      placeholder: docs/get-started.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is wrong or missing?
+      description: Describe the error, gap, or improvement. Quote the incorrect text if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: If you know the correct information, share it here. Commands should be tested against the real Muslimtify CLI.
+    validations:
+      required: false
+  - type: checkboxes
+    id: policy
+    attributes:
+      label: Acknowledgements
+      options:
+        - label: I have read the AI Usage Policy and will disclose any AI assistance.
+          required: true
