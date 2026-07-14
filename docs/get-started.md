@@ -131,6 +131,6 @@ every prayer.
 
 ## Next steps
 
-- [Configuration](./configuration.md) — tune location, method, madzhab, reminders, and sounds.
-- [Command reference](./command.md) — every CLI command with examples.
-- [Troubleshooting](./troubleshooting.md) — fixes for notifications, location, and the daemon.
+- [Configuration](./configuration.md): tune location, method, madzhab, reminders, and sounds.
+- [Command reference](./command.md): every CLI command with examples.
+- [Troubleshooting](./troubleshooting.md): fixes for notifications, location, and the daemon.

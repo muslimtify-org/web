@@ -10,26 +10,26 @@ established astronomical algorithms, entirely on your machine. A **calculation
 method** is the set of parameters a religious authority uses to define the edges of
 each prayer window, mainly the twilight angles for Fajr and Isha.
 
-Set your method with [`muslimtify method`](./command.md#muslimtify-method); the
+Set your method with [`muslimtify method`](./command.md#muslimtify-method), the
 default is `kemenag`.
 
 ## How a method is defined
 
 Each built-in method sets a handful of parameters:
 
-- **Fajr / Isha angle** — how far the sun sits below the horizon (in degrees) at the
+- **Fajr / Isha angle**: how far the sun sits below the horizon (in degrees) at the
   start of Fajr and the start of Isha. A larger angle means an earlier Fajr and a
   later Isha.
-- **Isha interval** — some authorities (Umm al-Qura, Qatar, Gulf, Portugal) define
+- **Isha interval**: some authorities (Umm al-Qura, Qatar, Gulf, Portugal) define
   Isha as a fixed number of minutes after Maghrib instead of an angle.
-- **Maghrib offset** — a small number of minutes added after sunset. Only Portugal
+- **Maghrib offset**: a small number of minutes added after sunset. Only Portugal
   and the Moonsighting Committee use one (3 minutes).
-- **Ihtiyat** — a precautionary margin added to every prayer time. Only Kemenag
-  (+2 min) and Jordan (+5 min) apply one; every other method uses 0. Sunrise gets
+- **Ihtiyat**: a precautionary margin added to every prayer time. Only Kemenag
+  (+2 min) and Jordan (+5 min) apply one, every other method uses 0. Sunrise gets
   the same margin subtracted rather than added.
 
 The Asr time is **not** part of the method. It is controlled separately by your
-madzhab and applies identically across every method — see
+madzhab and applies identically across every method, see
 [Asr and madzhab](#asr-and-madzhab).
 
 ## Method parameters
@@ -71,19 +71,19 @@ Muslimtify implements each method from its core angle/interval parameters. A few
 authorities apply extra, calendar- or location-specific adjustments in their
 official schedules that Muslimtify intentionally does **not** replicate:
 
-- **Umm al-Qura (`makkah`)** — Isha is a fixed **90 minutes** after Maghrib all year.
+- **Umm al-Qura (`makkah`)**: Isha is a fixed **90 minutes** after Maghrib all year.
   The official Saudi calendar switches to 120 minutes during Ramadan and advances the
-  printed times by ~3 minutes; Muslimtify does neither.
-- **Diyanet (`turkey`)** — the official Turkish times apply a *temkin* correction
+  printed times by ~3 minutes, Muslimtify does neither.
+- **Diyanet (`turkey`)**: the official Turkish times apply a *temkin* correction
   (about 10 minutes for Istanbul). Muslimtify does not apply temkin, so its times may
   differ from official Diyanet schedules by that amount.
-- **Dubai (`dubai`)** — Muslimtify uses the plain 18.2°/18.2° angles. The small
+- **Dubai (`dubai`)**: Muslimtify uses the plain 18.2°/18.2° angles. The small
   per-prayer rounding offsets seen in some official UAE tables are not applied.
-- **Moonsighting (`moonsighting`)** — Muslimtify treats this as a fixed 18° baseline
+- **Moonsighting (`moonsighting`)**: Muslimtify treats this as a fixed 18° baseline
   angle plus a 3-minute Maghrib offset. The committee's real method uses seasonal,
-  latitude-dependent curve-fit functions and multiple *shafaq* modes; those are not
+  latitude-dependent curve-fit functions and multiple *shafaq* modes, those are not
   implemented.
-- **Morocco (`morocco`)** — official times are adjusted manually per city by the
+- **Morocco (`morocco`)**: official times are adjusted manually per city by the
   Ministry of Habous. Muslimtify approximates with the 19.0°/17.0° angles only.
 
 Where these differences matter for your local mosque, use the per-prayer
@@ -91,14 +91,14 @@ Where these differences matter for your local mosque, use the per-prayer
 
 ## Notable per-method details (as implemented)
 
-- **Kemenag (`kemenag`, default)** — applies an *ihtiyat* precaution of +2 minutes to
+- **Kemenag (`kemenag`, default)**: applies an *ihtiyat* precaution of +2 minutes to
   every prayer (and −2 minutes to sunrise). See
   [Kemenag, the default](#kemenag-the-default).
-- **Jordan (`jordan`)** — applies a +5 minute *ihtiyat* to every prayer (and −5
+- **Jordan (`jordan`)**: applies a +5 minute *ihtiyat* to every prayer (and −5
   minutes to sunrise). This is a whole-schedule margin, not a Maghrib-only offset.
-- **Portugal (`portugal`)** — Isha is a fixed 77-minute interval after Maghrib, and
+- **Portugal (`portugal`)**: Isha is a fixed 77-minute interval after Maghrib, and
   Maghrib itself is set 3 minutes after sunset.
-- **Moonsighting (`moonsighting`)** — Maghrib is set 3 minutes after sunset; Fajr and
+- **Moonsighting (`moonsighting`)**: Maghrib is set 3 minutes after sunset, Fajr and
   Isha use the 18° angle.
 
 ## Dhuha
@@ -140,7 +140,7 @@ No major authority publishes a formal, quantified accuracy standard. In practice
 
 - The general jurisprudential consensus is that **±5 minutes** from the "true" time
   is acceptable.
-- A few methods carry a small precautionary *ihtiyat* buffer (Kemenag ±2, Jordan ±5);
+- A few methods carry a small precautionary *ihtiyat* buffer (Kemenag ±2, Jordan ±5),
   most apply none.
 - Muslimtify's underlying astronomical model is accurate to roughly **4 seconds of
   time**, so the choice of method (its Fajr/Isha angles) has far more effect on the
