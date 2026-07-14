@@ -14,7 +14,7 @@ const EXPERIENCES_SRC =
 
 const SCRIPT_ID = 'algolia-experiences';
 
-export default function SearchBar(): JSX.Element {
+export default function SearchBar(): React.JSX.Element {
   useEffect(() => {
     // Load the library only once. The navbar (and this container) persist
     // across client-side navigation, so the script must not be re-appended.
