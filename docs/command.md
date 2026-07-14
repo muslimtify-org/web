@@ -17,7 +17,7 @@ By default, muslimtify prints a human-readable **table**. Most read-only command
 | `--json` | Structured JSON |
 | `--headless` | Plain `key=value` pairs |
 
-This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](https://github.com/rizukirr/muslimtify/discussions/17) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10).
+This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10).
 
 Every command accepts `-h` / `--help` for its own usage and examples, e.g. `muslimtify show --help`.
 
