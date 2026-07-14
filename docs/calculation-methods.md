@@ -103,8 +103,8 @@ Where these differences matter for your local mosque, use the per-prayer
 
 ## Dhuha
 
-Muslimtify also computes a **Dhuha** time (sun altitude 4°30′ above the eastern
-horizon) for every method, though it is disabled by default. Enable it with
+Muslimtify also computes a **Dhuha** time (sun altitude 4.3°, about 4°18′, above
+the eastern horizon) for every method, though it is disabled by default. Enable it with
 `muslimtify notification enable dhuha`.
 
 ## Asr and madzhab
