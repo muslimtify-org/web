@@ -156,21 +156,10 @@ const config: Config = {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
     },
-    // Algolia DocSearch. Replace the three placeholders with the credentials
-    // from your DocSearch approval email (or Algolia dashboard → Settings →
-    // API Keys). The search-only apiKey is public and safe to commit.
-    algolia: {
-      // The application ID provided by Algolia
-      appId: '95EZ8EII0P',
-
-      // Public API key: it is safe to commit it
-      apiKey: '10006cfa7188806aec028bcaefb36412',
-
-      indexName: 'muslimtify',
-
-      // Optional: see doc section below
-      contextualSearch: true,
-    },
+    // Search is provided by the Algolia Experiences embed, wired up in
+    // src/theme/SearchBar.tsx (which renders the #autocomplete container and
+    // loads the Experiences library). No `algolia` themeConfig block is used —
+    // that would activate the classic DocSearch theme and conflict.
   } satisfies Preset.ThemeConfig,
 };
 
