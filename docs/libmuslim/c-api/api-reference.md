@@ -50,7 +50,7 @@ An enum naming the built-in calculation methods. Pass a value to
 | `CALC_CUSTOM` | `custom` | User-supplied parameters |
 
 `CALC_COUNT` is a sentinel equal to the number of methods. It is not a method
-itself; use it for bounds checks and array sizes.
+itself, use it for bounds checks and array sizes.
 
 #### `AsrSchool`
 
@@ -135,7 +135,7 @@ Calculates all prayer times for the given calendar date and location.
 | `year`, `month`, `day` | Gregorian calendar date. `month` is 1-12. |
 | `latitude` | Degrees north, negative for south. |
 | `longitude` | Degrees east, negative for west. |
-| `timezone` | UTC offset in hours (for example `7.0` for UTC+7, `-5.0` for UTC-5). Not resolved from a name; supply it directly or use `parse_timezone_offset()`. |
+| `timezone` | UTC offset in hours (for example `7.0` for UTC+7, `-5.0` for UTC-5). Not resolved from a name, supply it directly or use `parse_timezone_offset()`. |
 | `params` | Method parameters, from `method_params_get()` or your own struct. |
 
 Returns a `struct PrayerTimes` by value. Times are decimal hours in the local
@@ -148,7 +148,7 @@ const MethodParams *method_params_get(CalcMethod method);
 ```
 
 Returns a pointer to the built-in parameters for `method`, or `NULL` if `method`
-is out of range. The returned pointer is owned by the library; do not free or
+is out of range. The returned pointer is owned by the library, do not free or
 modify it.
 
 #### `method_from_string`
@@ -167,7 +167,7 @@ const char *method_to_string(CalcMethod method);
 ```
 
 Returns the lowercase string key for `method` (such as `"jakim"`), or `"custom"`
-if there is no match. The returned string is a static literal; do not free it.
+if there is no match. The returned string is a static literal, do not free it.
 
 #### `format_time_hm`
 
@@ -205,7 +205,7 @@ operating system. Use it only if you do not already know the offset to pass to
 :::caution
 Include `timezone.h` **before** any system `<time.h>` in the translation unit.
 On glibc the UTC-offset field requires a feature-test macro that must be set
-before `<time.h>` is first included; the header sets it for you, but only if
+before `<time.h>` is first included, the header sets it for you, but only if
 nothing has pulled in `<time.h>` ahead of it.
 :::
 
