@@ -64,6 +64,11 @@ const config: Config = {
 
   themeConfig: {
     image: 'img/docusaurus-social-card.jpg',
+    // Injected into every page's <head>. Algolia's crawler reads this tag to
+    // verify domain ownership for the DocSearch program.
+    metadata: [
+      {name: 'algolia-site-verification', content: '47740D008E2E0F0D'},
+    ],
     colorMode: {
       defaultMode: 'dark',
       respectPrefersColorScheme: true,
@@ -150,6 +155,21 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+    },
+    // Algolia DocSearch. Replace the three placeholders with the credentials
+    // from your DocSearch approval email (or Algolia dashboard → Settings →
+    // API Keys). The search-only apiKey is public and safe to commit.
+    algolia: {
+      // The application ID provided by Algolia
+      appId: '95EZ8EII0P',
+
+      // Public API key: it is safe to commit it
+      apiKey: '10006cfa7188806aec028bcaefb36412',
+
+      indexName: 'muslimtify',
+
+      // Optional: see doc section below
+      contextualSearch: true,
     },
   } satisfies Preset.ThemeConfig,
 };
