@@ -89,7 +89,7 @@
    The #autocomplete-scoped selector (id + class) outranks the widget's own
    button padding, so no !important is needed. */
 #autocomplete .ais-AutocompleteDetachedSearchButton {
-  padding-right: 5rem;
+  padding-right: 2rem;
 }
 
 /* The search modal is portaled to <body> (outside #autocomplete), so its parts
