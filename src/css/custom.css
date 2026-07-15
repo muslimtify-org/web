@@ -63,6 +63,63 @@
   font-weight: 600;
 }
 
+/* ---- Algolia Experiences search box (navbar) ----
+   The widget themes itself with --ais-autocomplete-* variables (values are
+   "R, G, B" triplets, used as rgba(var(--x), a)). Override them to the
+   Muslimtify gold palette instead of the default indigo, and widen the
+   container so the bar expands across the empty navbar space. The overrides
+   are applied to the theme wrapper too ([algolia-experiences-theme]) so they
+   win over the widget's own scoped defaults. Dark overrides live in the
+   [data-theme='dark'] block below. */
+
+/* Light-mode retint (brand gold #9b7d1e = 155, 125, 30). */
+#autocomplete,
+#autocomplete [algolia-experiences-theme] {
+  --ais-autocomplete-form-submit-icon-color: 155, 125, 30;
+  --ais-autocomplete-form-focus-ring-color: 155, 125, 30;
+  --ais-autocomplete-form-border-color: 155, 125, 30;
+  --ais-autocomplete-form-placeholder-color: 100, 116, 139;
+  --ais-autocomplete-text-color: 30, 41, 59;
+  --ais-autocomplete-item-selected-background-color: 155, 125, 30;
+}
+
+/* The navbar search is a collapsed trigger button (opens the modal), not an
+   inline input — the "Search" label sits in the DetachedSearchButton. Add
+   right padding so the label isn't flush against the pill's right edge.
+   The #autocomplete-scoped selector (id + class) outranks the widget's own
+   button padding, so no !important is needed. */
+#autocomplete .ais-AutocompleteDetachedSearchButton {
+  padding-right: 5rem;
+}
+
+/* The search modal is portaled to <body> (outside #autocomplete), so its parts
+   are targeted by their global .ais-Autocomplete* classes, NOT scoped under
+   #autocomplete. */
+
+/* The widget injects its own stylesheet at runtime, AFTER custom.css, so these
+   overrides need !important to win on equal specificity. (The color overrides
+   above don't, because they set custom properties the widget reads rather than
+   competing with its declarations.) */
+
+/* Dialog box: round the corners and inset its contents horizontally. */
+.ais-AutocompleteDetachedContainer {
+  border-radius: 8px !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+}
+
+/* The prefix buttons (back arrow + submit) render with the browser's default
+   gray <button> chrome, which shows up as a gray block next to the input.
+   Strip the chrome so only the icon remains, tinted with the brand color
+   (fill="currentColor" follows `color`). */
+.ais-AutocompleteInputWrapperPrefix button {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: var(--ifm-color-primary) !important;
+  cursor: pointer;
+}
+
 /* ---- Dark mode (calmer night palette, tuned for reading) ---- */
 [data-theme='dark'] {
   --ifm-color-primary: #e9c877;
@@ -80,4 +137,18 @@
   --ifm-color-content: #d7e1f4;
   --ifm-color-content-secondary: #93a5c6;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+}
+
+/* Algolia Experiences search box — night-sea overrides (gold #e9c877). */
+[data-theme='dark'] #autocomplete,
+[data-theme='dark'] #autocomplete [algolia-experiences-theme] {
+  --ais-autocomplete-form-submit-icon-color: 233, 200, 119;
+  --ais-autocomplete-form-focus-ring-color: 233, 200, 119;
+  --ais-autocomplete-form-border-color: 215, 225, 244; /* --mt-line */
+  --ais-autocomplete-form-placeholder-color: 147, 165, 198; /* --mt-muted */
+  --ais-autocomplete-text-color: 215, 225, 244; /* --mt-star */
+  --ais-autocomplete-background-color: 10, 23, 48; /* --mt-deep (panel) */
+  --ais-autocomplete-panel-border-color: 215, 225, 244;
+  --ais-autocomplete-item-selected-background-color: 233, 200, 119;
+  --ais-autocomplete-item-secondary-color: 147, 165, 198;
 }
