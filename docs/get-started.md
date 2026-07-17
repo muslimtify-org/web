@@ -8,7 +8,7 @@ sidebar_position: 1
 
 Muslimtify keeps you consistent with your daily prayers by delivering accurate prayer times and timely desktop notifications. Designed for **Linux and Windows**, it automatically calculates prayer schedules and reminds you 30, 15, and 5 minutes before the Adhan, or at your own custom intervals, and again when it is time to pray.
 
-All calculations run **locally** on your machine. No internet connection, no accounts, and no tracking. Muslimtify supports **21 international calculation methods**, all madzhab, and every country, with Kemenag as the default method.
+All prayer time calculations run **locally** on your machine, with no accounts and no tracking. The only time Muslimtify reaches the network is to detect your location from your IP address via `ipinfo.io`, which is optional: set your coordinates manually with `location set --lat/--long` and it never makes a network request. Muslimtify supports **21 international calculation methods**, all madzhab, and every country, with Kemenag as the default method.
 
 ## Installation
 
