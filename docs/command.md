@@ -64,6 +64,8 @@ muslimtify location set --auto --country=EG          # auto-detect, custom count
 muslimtify location set --lat=-6.175 --long=106.82   # set coordinates manually
 muslimtify location set --timezone=Asia/Jakarta      # override the timezone
 muslimtify location set --city=Jakarta               # set a city label
+muslimtify location set --refresh-interval=21600     # re-check the location every 6 hours
+muslimtify location set --refresh-interval=0         # never re-check automatically
 ```
 
 `muslimtify location set` updates only the fields you pass, leaving the rest untouched.
@@ -76,8 +78,11 @@ muslimtify location set --city=Jakarta               # set a city label
 | `--timezone=<iana>` | Set the IANA timezone, e.g. `Asia/Jakarta` (make sure the coordinates match) |
 | `--city=<name>` | Set a display label for your city |
 | `--country=<iso2>` | Set the ISO-2 country code, e.g. `ID` (used by `method --auto`) |
+| `--refresh-interval=<seconds>` | How often an auto-detected location is re-checked. `0` disables it, the minimum is `3600` (1 hour), and the default is `43200` (12 hours). See [Location auto-refresh](./configuration.md#location-auto-refresh) |
 
 > `--auto` may be combined only with `--city` and/or `--country`. It cannot be mixed with `--lat`, `--long`, or `--timezone`.
+
+> Setting coordinates manually with `--lat` / `--long` turns auto-detection off, so the location is never re-checked. `--refresh-interval` only affects locations detected with `--auto`.
 
 ## `muslimtify method`
 
