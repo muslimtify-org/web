@@ -186,7 +186,75 @@ void format_time_hms(double timeHours, char *outBuffer, size_t bufSize);
 ```
 
 Writes a decimal-hours value into `outBuffer` as `"HH:MM:SS"`. A buffer of 9
-bytes or more is enough.
+bytes or more is enough. Seconds are rounded to nearest, so this does not
+follow the round-up-to-the-minute convention that `format_time_hm()` uses.
+
+### Calendar helpers
+
+A matched pair that converts between a civil (proleptic Gregorian) date and a
+day number counted from 1970-01-01. They exist so you can walk a range of dates
+without going through `struct tm` or `mktime()`, which keeps daylight saving and
+local-time behaviour out of the loop entirely.
+
+Both are `static inline` and are declared **outside** the implementation guard,
+so they are available from every translation unit that includes the header. You
+do not need to define `PRAYERTIMES_IMPLEMENTATION` to call them, and they add
+nothing at link time.
+
+#### `mt_days_from_civil`
+
+```c
+static inline long mt_days_from_civil(int y, int m, int d);
+```
+
+Returns the number of days from 1970-01-01 to the given date. The result is
+signed, so any date before the epoch is negative. `1970-01-01` returns `0` and
+`1969-12-31` returns `-1`.
+
+`m` is 1-12 and `d` is 1-31. The conversion is arithmetic and does not validate
+the date, so an impossible day such as 31 February still produces a number.
+Validate the input yourself if it comes from a user.
+
+#### `mt_civil_from_days`
+
+```c
+static inline void mt_civil_from_days(long z, int *y, int *m, int *d);
+```
+
+The inverse. Writes the calendar date for day number `z` into `*y`, `*m` and
+`*d`. Round-tripping a value through both functions returns the original, across
+pre-epoch and far-future day numbers alike.
+
+#### Example: prayer times for a whole month
+
+```c
+const MethodParams *params = method_params_get(CALC_KEMENAG);
+
+long start = mt_days_from_civil(2026, 7, 1);
+long end   = mt_days_from_civil(2026, 7, 31);
+
+for (long serial = start; serial <= end; serial++) {
+    int y, m, d;
+    mt_civil_from_days(serial, &y, &m, &d);
+
+    struct PrayerTimes t =
+        calculate_prayer_times(y, m, d, -6.2851291, 106.9814968, 7.0, params);
+
+    char buffer[16];
+    format_time_hm(t.fajr, buffer, sizeof(buffer));
+    printf("%04d-%02d-%02d  Fajr: %s\n", y, m, d, buffer);
+}
+```
+
+Incrementing the day number is what makes this safe. Adding 86400 seconds to a
+`time_t` would drift by an hour across a daylight saving transition, and
+month-end rollover would have to be handled by hand.
+
+:::note
+Both functions use Howard Hinnant's public-domain civil calendar algorithm. The
+`mt_` prefix is retained so this header stays byte-comparable with the copy
+vendored inside Muslimtify itself.
+:::
 
 ---
 

@@ -8,7 +8,7 @@ sidebar_position: 1
 
 Muslimtify keeps you consistent with your daily prayers by delivering accurate prayer times and timely desktop notifications. Designed for **Linux and Windows**, it automatically calculates prayer schedules and reminds you 30, 15, and 5 minutes before the Adhan, or at your own custom intervals, and again when it is time to pray.
 
-All prayer time calculations run **locally** on your machine, with no accounts and no tracking. The only time Muslimtify reaches the network is to detect your location from your IP address via `ipinfo.io`, which is optional: set your coordinates manually with `location set --lat/--long` and it never makes a network request. Muslimtify supports **21 international calculation methods**, all madzhab, and every country, with Kemenag as the default method.
+All prayer time calculations run **locally** on your machine, with no accounts and no tracking. The only time Muslimtify reaches the network is to detect your location from your IP address via `ipinfo.io`, and that is optional. Set your coordinates manually with `location set --lat/--long`, or read them from a GPS receiver with `location gps on`, and it never makes a network request. Muslimtify supports **21 international calculation methods**, all madzhab, and every country, with Kemenag as the default method.
 
 ## Installation
 
@@ -96,7 +96,24 @@ muslimtify daemon install
 ```
 
 On Windows, run `.\install.ps1` instead of `./install.sh` (remove later with
-`.\uninstall.ps1`).
+`.\uninstall.ps1`). Building on Windows requires MSVC, and the build stops with an explicit message if another compiler is used.
+
+`install.sh` compiles as the user who invoked `sudo` rather than as root, and refuses to build from a source tree that is group- or world-writable, since anything in that tree would otherwise be executed with root privileges. If it reports unsafe permissions, correct the listed paths so each is owned by root or by you and is not writable by others, then re-run.
+
+### Optional: GPS support
+
+GPS is optional and needs nothing at build time. On Linux, install and start `gpsd` if you want Muslimtify to read coordinates from a local receiver instead of the network:
+
+```bash
+# Ubuntu/Debian
+sudo apt install gpsd
+# Fedora/RHEL
+sudo dnf install gpsd
+# Arch
+sudo pacman -S gpsd
+```
+
+Muslimtify talks to `gpsd` over a socket, so there is no `libgps` dependency and no rebuild is needed. Enable it with `muslimtify location gps on`. On Windows nothing needs installing, but location access must be enabled in Settings.
 
 ## Quick start
 
@@ -124,6 +141,12 @@ If the automatic detection is off, set your location and method manually:
 ```bash
 muslimtify location set --auto     # detect location from your IP
 muslimtify method --auto           # pick the method for your detected country
+```
+
+If you have a GPS receiver and would rather not use a network lookup at all:
+
+```bash
+muslimtify location gps on         # probe the receiver and enable it
 ```
 
 That is it. Muslimtify now runs quietly in the background and notifies you before

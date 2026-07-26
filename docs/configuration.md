@@ -31,7 +31,34 @@ muslimtify location set --refresh-interval=43200     # re-check every 12 hours
 muslimtify location                                  # show current location
 ```
 
-If the machine is in a different region than the coordinates you set, override the timezone explicitly with `--timezone=<iana>`.
+If the machine is in a different region than the coordinates you set, override the timezone explicitly with `--timezone=<iana>`. The name has to be one the host system can actually resolve. An unknown zone is rejected at the point you set it, instead of being saved and silently treated as UTC.
+
+The stored `timezone_offset` is only a fallback. When a valid IANA `timezone` is present, the offset used to compute prayer times is derived from that name for the date being calculated, so daylight saving and historical zone changes are applied automatically. `muslimtify location` reports the offset in effect today for the same reason.
+
+On Linux the zone is read from the system tz database. On Windows, IANA names are translated through the full CLDR `windowsZones` mapping, which covers 449 zone names, so common IANA identifiers resolve rather than falling back to UTC.
+
+## GPS location source
+
+By default Muslimtify resolves your coordinates over the network with `ipinfo.io`. If the machine has a GPS receiver, you can read them locally instead.
+
+```bash
+muslimtify location gps        # show the current state
+muslimtify location gps on     # probe the receiver and enable it
+muslimtify location gps off    # go back to ipinfo lookup
+```
+
+This maps to a single `use_gps` boolean in the `location` block of `config.json`, which defaults to `false`.
+
+On Linux the coordinates come from a running `gpsd`, read over a local socket on `127.0.0.1:2947`. There is no build-time dependency on `libgps`, so the same binary picks up GPS whenever `gpsd` is running, with no rebuild. On Windows they come from the WinRT Geolocator, which requires location access to be enabled in Settings.
+
+Behaviour worth knowing:
+
+- **Enabling is validated.** `gps on` probes the receiver first and refuses to save the setting if none is reachable. See [`muslimtify location gps`](./command.md#muslimtify-location-gps) for each failure message.
+- **`ipinfo.io` remains the fallback.** Whenever a GPS read does not produce a fix, the network lookup runs instead, so you always get a location.
+- **A structural failure disables GPS.** If the receiver or daemon disappears after you enabled it, Muslimtify warns once and clears `use_gps` so it stops retrying on every cycle.
+- **A denied permission does not.** On Windows a refused location request leaves `use_gps` set, because granting access in Settings is enough to make the next attempt succeed.
+- **A missing fix is silent.** No warning is printed while a device is present but has not locked on yet.
+- **GPS carries no timezone.** Only latitude and longitude come from the receiver. The timezone is read from the host system, and the country is left untouched, so `method --auto` keeps working from whatever country you already have.
 
 ## Location auto-refresh
 
@@ -126,6 +153,7 @@ Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per p
     "timezone": "UTC",
     "timezone_offset": 0.0,
     "auto_detect": true,
+    "use_gps": false,
     "updated_at": 0,
     "refresh_interval": 43200,
     "city": "",

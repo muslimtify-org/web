@@ -51,6 +51,15 @@ muslimtify show --date 2026-07-01 2026-07-30      # every day from Jul 1 to Jul 
 muslimtify show --date 2026-07-07 --json          # single day as JSON
 ```
 
+Two limits apply to the dates you pass:
+
+| Limit | Value | Behaviour when exceeded |
+| --- | --- | --- |
+| Year | `1` to `9999` | The date is rejected as malformed |
+| Range span | 366 days (inclusive) | The range is rejected before any output |
+
+The 366-day cap covers a full leap year, which is the longest span with a practical use. Components do not need to be zero-padded, so `2026-7-7` parses the same as `2026-07-07`. Anything else, including a leading sign, extra digits such as `00002026`, or trailing characters, is rejected.
+
 ## `muslimtify location`
 
 Show or update your location. Prayer times depend on your coordinates and timezone.
@@ -66,7 +75,12 @@ muslimtify location set --timezone=Asia/Jakarta      # override the timezone
 muslimtify location set --city=Jakarta               # set a city label
 muslimtify location set --refresh-interval=21600     # re-check the location every 6 hours
 muslimtify location set --refresh-interval=0         # never re-check automatically
+muslimtify location gps on                           # read coordinates from a GPS receiver
 ```
+
+The `location` view reports a `gps` field alongside the saved coordinates, showing whether the GPS source is enabled. It appears in all three output formats, as a `gps` row in the table, `gps=true` / `gps=false` in `--headless`, and a boolean `"gps"` in `--json`.
+
+The `gmt` field shows the offset in effect **today**, so it follows daylight saving rather than the value frozen in the config when the location was last set.
 
 `muslimtify location set` updates only the fields you pass, leaving the rest untouched.
 
@@ -75,7 +89,7 @@ muslimtify location set --refresh-interval=0         # never re-check automatica
 | `--auto` | Detect coordinates, timezone, and country from your IP address |
 | `--lat=<latitude>` | Set latitude manually (make sure the timezone matches) |
 | `--long=<longitude>` | Set longitude manually (make sure the timezone matches) |
-| `--timezone=<iana>` | Set the IANA timezone, e.g. `Asia/Jakarta` (make sure the coordinates match) |
+| `--timezone=<iana>` | Set the IANA timezone, e.g. `Asia/Jakarta` (make sure the coordinates match). The name must resolve on this system or it is rejected |
 | `--city=<name>` | Set a display label for your city |
 | `--country=<iso2>` | Set the ISO-2 country code, e.g. `ID` (used by `method --auto`) |
 | `--refresh-interval=<seconds>` | How often an auto-detected location is re-checked. `0` disables it, the minimum is `3600` (1 hour), and the default is `43200` (12 hours). See [Location auto-refresh](./configuration.md#location-auto-refresh) |
@@ -83,6 +97,50 @@ muslimtify location set --refresh-interval=0         # never re-check automatica
 > `--auto` may be combined only with `--city` and/or `--country`. It cannot be mixed with `--lat`, `--long`, or `--timezone`.
 
 > Setting coordinates manually with `--lat` / `--long` turns auto-detection off, so the location is never re-checked. `--refresh-interval` only affects locations detected with `--auto`.
+
+> An unknown or unresolvable timezone name is rejected with `Error: Unknown timezone '<name>'` rather than saved. Real zones that sit at UTC+0, such as `Africa/Abidjan`, are accepted normally.
+
+## `muslimtify location gps`
+
+Read your coordinates from a GPS receiver on the machine instead of looking them up over the network. GPS is **off by default**.
+
+```bash
+muslimtify location gps        # show whether GPS is currently enabled
+muslimtify location gps on     # probe the receiver and enable it if one is present
+muslimtify location gps off    # disable GPS and go back to ipinfo lookup
+```
+
+| Argument | Description |
+| --- | --- |
+| _(none)_ | Print `GPS is enabled` or `GPS is disabled` |
+| `on` | Probe for a receiver, and enable GPS only if one is reachable |
+| `off` | Disable GPS and use `ipinfo.io` network geolocation |
+| `-h`, `--help` | Show the help for this subcommand |
+
+Where the coordinates come from depends on the platform:
+
+| Platform | Source | Requirement |
+| --- | --- | --- |
+| Linux | A running `gpsd`, read over a local socket on `127.0.0.1:2947` | `gpsd` installed and running, with a GPS device attached |
+| Windows | The WinRT Geolocator | Location access enabled under Settings > Privacy & security > Location |
+
+`gps on` is a **validating enable**. It probes the receiver first and only saves the setting if one is actually available, so a typo or a missing daemon fails immediately instead of silently degrading later. Two outcomes enable GPS:
+
+- A fix is ready now, confirmed with the detected coordinates.
+- A device is present but has no fix yet. GPS is enabled anyway and `ipinfo.io` is used until a fix arrives.
+
+Everything else leaves GPS disabled and reports why:
+
+| Message | Meaning |
+| --- | --- |
+| `GPS: cannot reach gpsd. Install and start it, then try again.` | No `gpsd` is listening on the local socket |
+| `GPS: no GPS device detected. Connect one, then try again.` | `gpsd` is running but reports no device |
+| `GPS: location access is turned off.` | Windows location permission is denied |
+| `GPS not available in this build.` | The binary has no GPS client for this platform |
+
+> GPS supplies coordinates only, never a timezone. The timezone is taken from the host system when a GPS fix is used, so set it explicitly with `--timezone` if the machine's clock is in a different region.
+
+> Toggling GPS clears the cached prayer times so the next run recomputes them from the new source.
 
 ## `muslimtify method`
 
