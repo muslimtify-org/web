@@ -50,7 +50,7 @@ A single Rust page would use fewer files, but it would be long and inconsistent 
 A guide-only section that delegates the API reference to docs.rs would avoid duplication, but it would make the Rust section less complete than the C section and force readers to switch sites.
 
 ## Testing
-- Search every new Rust documentation file for em dashes and semicolons, both searches must return no matches.
+- Scan prose and code comments in every new Rust documentation file for em dashes and semicolons, both must be absent. Rust syntax inside fenced code blocks may use required semicolons.
 - Check code examples against the current Rust public API.
 - Run relevant libmuslim-rs tests and its basic example when confirming documented behavior.
 - Run `npm run typecheck` in muslimtify-web.
