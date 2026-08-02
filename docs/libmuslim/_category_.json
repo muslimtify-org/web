@@ -1,11 +1,11 @@
 {
-  "label": "libmuslim",
+  "label": "Libmuslim",
   "position": 6,
   "collapsible": true,
   "collapsed": true,
   "link": {
     "type": "generated-index",
     "title": "libmuslim",
-    "description": "The portable, dependency-free C library that powers Muslimtify's prayer-time calculations. Language bindings are documented per language in the sections below."
+    "description": "libmuslim is a collection of Islamic utility libraries originally implemented in C. Native language bindings and installation instructions are documented per language in the sections below."
   }
 }

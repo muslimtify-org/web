@@ -1,0 +1,9 @@
+{
+  "label": "Prayer times API",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "title": "libmuslim prayer times API",
+    "description": "prayertimes.h provides prayer time calculation APIs as part of the libmuslim suite. Originally implemented in C, it offers language bindings and native wrappers documented in the sections below."
+  }
+}
