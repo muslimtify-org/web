@@ -1,9 +1,0 @@
-{
-  "label": "Rust",
-  "position": 2,
-  "link": {
-    "type": "generated-index",
-    "title": "libmuslim Rust API",
-    "description": "Safe Rust bindings for prayer time calculations, including installation, examples, validation, and the complete public API."
-  }
-}
