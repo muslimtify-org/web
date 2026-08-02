@@ -1,7 +1,7 @@
 ---
 title: libmuslim Rust prayer times documentation
 date: 2026-08-02
-status: draft
+status: approved
 ---
 
 # libmuslim Rust Prayer Times Documentation
