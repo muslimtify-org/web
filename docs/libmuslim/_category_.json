@@ -1,11 +1,11 @@
 {
-  "label": "Libmuslim",
+  "label": "libmuslim",
   "position": 6,
   "collapsible": true,
   "collapsed": true,
   "link": {
     "type": "generated-index",
     "title": "libmuslim",
-    "description": "libmuslim is a collection of Islamic utility libraries originally implemented in C. Native language bindings and installation instructions are documented per language in the sections below."
+    "description": "libmuslim is a collection of Islamic utility libraries written in C, starting with a dependency-free prayer time calculator. Pick your language below — each section covers installation, a quick start, and the full API reference for that language."
   }
 }

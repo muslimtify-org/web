@@ -1,0 +1,9 @@
+{
+  "label": "Prayer times API",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "title": "Prayer times API (C)",
+    "description": "Calculate daily prayer times for any date and location with prayertimes.h — a portable, dependency-free C header supporting 21 international calculation methods. Start with the overview, follow the quick start, then dive into the full API reference."
+  }
+}
