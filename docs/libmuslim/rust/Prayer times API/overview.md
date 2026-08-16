@@ -3,55 +3,56 @@ title: Overview
 sidebar_position: 1
 ---
 
-# libmuslim Rust API
+# libmuslim Rust binding
 
-`libmuslim-rs` provides safe, idiomatic Rust bindings for the prayer time
-calculator in libmuslim. The calculation code is compiled from the vendored C
-source, so applications do not need to install libmuslim separately.
+**libmuslim-rs** is the official Rust binding for libmuslim. It wraps the C headers in a safe, idiomatic API: invalid input is rejected by the type system or returned as a `Result`, and no `unsafe` is required of the caller.
 
-The package and import names are different:
+The C sources are vendored into the crate and compiled by a build script, so there is no system libmuslim to install and nothing to link by hand. Adding the crate is the whole installation.
 
-| Context | Name |
-| --- | --- |
-| Cargo package | `libmuslim-rs` |
-| Rust library | `libmuslim` |
-| Prayer time module | `libmuslim::prayertimes` |
+## Package name and import name
 
-## Supported API
+The crates.io package is `libmuslim-rs`, but the Rust library it produces is named `libmuslim`. Your `Cargo.toml` names the first and your `use` statements name the second.
 
-The Rust binding currently covers `prayertimes.h`. It provides:
+```bash
+cargo add libmuslim-rs
+```
 
-- 21 built-in calculation methods and custom parameters
-- Validated Gregorian dates, coordinates, and UTC offsets
-- Fajr, Sunrise, Dhuha, Dhuhr, Asr, Maghrib, and Isha times
-- `HH:MM` and `HH:MM:SS` formatting
-- Date conversion to and from Unix epoch days
-- Typed errors for invalid input and FFI failures
+```rust
+use libmuslim::prayertimes::calculate;
+```
 
-Bindings for `hijri.h` and `timezone.h` are not available yet.
+The minimum supported Rust version is **1.85**. A C compiler is required at build time, since the vendored C sources are compiled as part of the crate.
 
-## Safe wrapper design
+## Modules
 
-The public API validates values before they cross the FFI boundary. Raw C
-types, pointers, and functions remain private. Application code works with
-owned Rust values such as `Date`, `Coordinates`, `MethodParams`, and
-`PrayerTimes`.
+| Module | Wraps | Purpose |
+| --- | --- | --- |
+| `libmuslim::prayertimes` | `prayertimes.h` | Pure astronomy. Turns a date, location and explicit UTC offset into prayer times. |
+| `libmuslim::timezone` | `timezone.h` | Optional. Resolves the UTC offset for an IANA time zone at an instant, with daylight saving applied. |
 
-The library includes the C implementation and compiles it through Cargo. A
-C11-compatible compiler must be available when building the crate.
+`prayertimes` never consults a time zone database. It takes the offset you give it and does arithmetic. `timezone` exists only so you do not have to work that offset out yourself, and you can ignore the module entirely if you already know it.
 
-## Time zones
+## What the binding adds over the C API
 
-Calculations require an explicit UTC offset for the requested date and
-location. The Rust binding does not look up IANA time zone names and does not
-apply daylight saving rules.
+The binding is deliberately thin. It exposes what the headers expose and nothing more, so there are no calculation features here that the C library does not have. What it does add is enforcement of the contracts the C API documents but cannot check.
 
-For example, Jakarta uses `UtcOffset::from_hours(7.0)`. An application that
-supports locations with daylight saving time must resolve the correct offset
-before calling `calculate`.
+Values are validated on construction rather than on use. `Date`, `Coordinates` and `UtcOffset` are constructed through fallible constructors, so an out-of-range latitude or a 31 February is rejected at the point you create it, not silently folded into a wrong answer several calls later.
 
-Continue to the [Quick start](./quick-start) for a complete example, or open the
-[API reference](./api-reference) for all public types and functions.
+Failures are values, not sentinels. Where the C API returns a sentinel that overlaps a legitimate result, the Rust API returns a `Result`. `CalculationMethod::from_str` distinguishes a genuine `Custom` from an unrecognized name, and `timezone::offset_at` distinguishes real UTC from a zone the host cannot resolve.
+
+Results are checked before they reach you. A non-finite time coming back from C is reported as `Error::NonFiniteResult` rather than propagating a `NaN` into your formatting code.
+
+## Thread safety
+
+Both modules are safe to call concurrently from any number of threads. Neither takes a lock nor mutates process-global state.
+
+This was not always true. Earlier versions resolved offsets through the C `parse_timezone_offset()`, which set the process `TZ` environment variable and so raced with any other thread in the program calling `getenv`, `localtime` or `tzset`. The C library now reads the zone's TZif file directly instead, and the binding no longer serializes calls.
+
+## License
+
+libmuslim-rs is released under the MIT License, the same as libmuslim itself.
+
+Continue to the [Quick start](./quick-start) for a complete working program, or jump to the [API reference](./api-reference) for every type and function.
 
 ## Links
 

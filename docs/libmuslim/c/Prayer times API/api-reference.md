@@ -279,25 +279,37 @@ nothing has pulled in `<time.h>` ahead of it.
 
 Unlike `prayertimes.h`, this header touches the operating system:
 
-- **POSIX**: reads the system tz database via `setenv(TZ)` and `localtime_r()`.
+- **POSIX**: reads the zone's TZif file directly from the system tz database, resolved against `TZDIR` (falling back to `/usr/share/zoneinfo`).
 - **Windows**: uses `EnumDynamicTimeZoneInformation` and
   `SystemTimeToTzSpecificLocalTimeEx`, translating IANA names through a
-  CLDR-derived table. Zones outside that table resolve to UTC.
+  CLDR-derived table. Zones outside that table cannot be resolved and are
+  reported as a failure.
 
 ### Functions
 
 #### `parse_timezone_offset`
 
 ```c
-double parse_timezone_offset(const char *tz_name, time_t when);
+int parse_timezone_offset(const char *tz_name, time_t when, double *out);
 ```
 
-Returns the UTC offset, in hours, for the IANA zone `tz_name` at the instant
-`when` (Unix epoch seconds, UTC). Daylight saving is already applied: for
-`"Europe/London"` this returns `0.0` in winter and `1.0` during British Summer
-Time. Pass the result straight into `calculate_prayer_times()`.
+Writes the UTC offset, in hours, for the IANA zone `tz_name` at the instant
+`when` (Unix epoch seconds, UTC) into `*out`. Daylight saving is already
+applied: for `"Europe/London"` this yields `0.0` in winter and `1.0` during
+British Summer Time. Pass the result straight into `calculate_prayer_times()`.
 
-Returns `0.0` if `tz_name` is `NULL` or cannot be resolved by the host.
+Returns `0` on success. Returns `-1` if `tz_name` or `out` is `NULL`, or if the
+zone cannot be resolved by the host, leaving `*out` untouched.
+
+On POSIX, `tz_name` may also be an absolute path to a TZif file, either form
+with a leading `:`, or a bare POSIX TZ string such as `"WIB-7"` when no matching
+file exists. TZif files below version 2 are not read.
+
+:::note
+This function used to return the offset as a `double`, with `0.0` standing for
+both real UTC and an unresolvable zone. It now reports failure separately, so
+those two cases can be told apart.
+:::
 
 #### `get_system_timezone`
 

@@ -47,18 +47,18 @@ cc example.c -lm -o example
 ```
 
 ```text title="Output"
-Fajr     04:41
-Sunrise  06:01
-Dhuha    06:29
-Dhuhr    11:56
-Asr      15:20
-Maghrib  17:47
-Isha     18:59
+Fajr     04:44
+Sunrise  06:03
+Dhuha    06:28
+Dhuhr    12:01
+Asr      15:23
+Maghrib  17:54
+Isha     19:08
 ```
 
 :::note
-Exact times depend on the calculation method and your inputs. The values above
-are illustrative.
+Times depend on the calculation method, the location and the offset. Change any
+of them and the output changes.
 :::
 
 ## Letting the library resolve the time zone
@@ -68,24 +68,33 @@ have the offset resolved from an IANA time zone, with daylight saving handled
 automatically, include the optional `timezone.h` helper.
 
 :::caution
-`timezone.h` must be included **before** any system `<time.h>` in that
-translation unit, because it sets a feature-test macro that glibc needs for the
-UTC-offset field.
+`timezone.h` must be included **before any system header** in that translation
+unit, because it sets a feature-test macro that glibc reads the first time
+`<features.h>` is pulled in. `<time.h>` is the obvious one, but `prayertimes.h`
+includes `<math.h>`, which is enough to lock the setting in. Put `timezone.h`
+first and the order can never be wrong.
+
+Getting this wrong is silent under the default `gnu11` dialect and a compile
+error under `-std=c11`.
 :::
 
 ```c title="example_tz.c"
+#define MUSLIM_TIMEZONE_IMPLEMENTATION
+#include "timezone.h"   // must come before any system header
+
 #define PRAYERTIMES_IMPLEMENTATION
 #include "prayertimes.h"
-
-#define MUSLIM_TIMEZONE_IMPLEMENTATION
-#include "timezone.h"   // must come before <time.h>
 
 #include <time.h>
 #include <stdio.h>
 
 int main(void) {
     time_t when = time(NULL);
-    double offset = parse_timezone_offset("Asia/Jakarta", when); // -> 7.0
+    double offset;
+    if (parse_timezone_offset("Asia/Jakarta", when, &offset) != 0) {
+        fprintf(stderr, "cannot resolve time zone\n");
+        return 1;
+    }
 
     const MethodParams *params = method_params_get(CALC_KEMENAG);
     struct PrayerTimes t = calculate_prayer_times(
