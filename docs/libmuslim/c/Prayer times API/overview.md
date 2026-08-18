@@ -36,6 +36,26 @@ implementation is compiled into your program only when you define a macro in
 Everywhere else, include the header normally without the macro. The same pattern
 applies to `timezone.h` with `MUSLIM_TIMEZONE_IMPLEMENTATION`.
 
+:::caution The implementation file must reach the header once
+
+The include guard suppresses the declarations on a repeat include, but the
+implementation block sits outside it, exactly as in `stb` and `miniaudio`. If
+the file that defines `PRAYERTIMES_IMPLEMENTATION` also includes another header
+that pulls in `prayertimes.h`, the implementation expands twice and you get
+`redefinition of 'calculate_prayer_times'`.
+
+The reliable pattern is a dedicated translation unit that includes nothing else:
+
+```c
+// prayertimes.c
+#define PRAYERTIMES_IMPLEMENTATION
+#include "prayertimes.h"
+```
+
+Add that one file to your build and never define the macro anywhere else.
+
+:::
+
 The whole public interface is wrapped in `extern "C"`, so the headers can be
 included directly from C++ as well as C.
 
@@ -45,10 +65,15 @@ libmuslim is header-only, so there is nothing to build or link (apart from the
 system math library). Vendor the headers straight into your source tree:
 
 ```bash
-# Copy the headers from the repository
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/main/prayertimes.h
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/main/timezone.h
+# Copy the headers from a tagged release
+curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/prayertimes.h
+curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/timezone.h
 ```
+
+Pin the tag rather than `main`. `main` moves, and a header that silently changes
+under a vendored copy is the failure this convention is meant to avoid. The
+latest tag is on the
+[releases page](https://github.com/muslimtify-org/libmuslim/releases).
 
 Then compile, linking the math library (`-lm`) that `prayertimes.h` needs:
 
