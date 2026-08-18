@@ -65,15 +65,38 @@ libmuslim is header-only, so there is nothing to build or link (apart from the
 system math library). Vendor the headers straight into your source tree:
 
 ```bash
-# Copy the headers from a tagged release
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/prayertimes.h
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/timezone.h
+# Latest release
+curl -LO https://github.com/muslimtify-org/libmuslim/releases/latest/download/prayertimes.h
+curl -LO https://github.com/muslimtify-org/libmuslim/releases/latest/download/timezone.h
 ```
 
-Pin the tag rather than `main`. `main` moves, and a header that silently changes
-under a vendored copy is the failure this convention is meant to avoid. The
-latest tag is on the
+`-L` matters, because `latest` is a redirect.
+
+To pin a specific release instead, name the tag:
+
+```bash
+curl -LO https://github.com/muslimtify-org/libmuslim/releases/download/2026.08.18/prayertimes.h
+```
+
+Either form is fine, and neither is `main`. `main` moves under you between
+releases, and a header that silently changes beneath a vendored copy is the
+failure this convention exists to prevent. `latest` moves too, but only when a
+release is cut, and only at the moment you download. Once the file is in your
+tree it is yours until you replace it.
+
+Prefer `latest` when you are starting out, and a pinned tag when a build has to
+be reproducible from the command alone. If you ever need to know which version
+a vendored file is, read the banner at the top of it. Every release is on the
 [releases page](https://github.com/muslimtify-org/libmuslim/releases).
+
+:::note Tag and header version are different numbers
+The tag is a calendar date. Each header carries its own semantic version in its
+banner, and they move independently, so `2026.08.18` contains `prayertimes.h`
+`v0.1.1` alongside `hijri.h` and `timezone.h` at `v0.1.0`. That is expected, not
+a mismatch. Pin the tag to fetch a file, read the header version to reason about
+compatibility.
+:::
+
 
 Then compile, linking the math library (`-lm`) that `prayertimes.h` needs:
 

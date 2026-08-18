@@ -77,7 +77,7 @@ Header-only, so there is nothing to build or link beyond the system math
 library:
 
 ```bash
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/hijri.h
+curl -LO https://github.com/muslimtify-org/libmuslim/releases/latest/download/hijri.h
 ```
 
 Pin the tag rather than `main`. `main` moves, and a header that silently changes
