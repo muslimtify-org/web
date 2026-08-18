@@ -155,6 +155,11 @@ const config: Config = {
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      // prism-react-renderer bundles a fixed language set that already covers
+      // c, rust, json, yaml and css. Anything else has to be requested here or
+      // its code blocks render as plain text. bash is the most used language
+      // on the site and was silently unhighlighted until this was added.
+      additionalLanguages: ['bash', 'dart', 'powershell'],
     },
     // Search is provided by the Algolia Experiences embed, wired up in
     // src/theme/SearchBar.tsx (which renders the #autocomplete container and
