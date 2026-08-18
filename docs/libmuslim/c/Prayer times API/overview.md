@@ -66,14 +66,23 @@ system math library). Vendor the headers straight into your source tree:
 
 ```bash
 # Copy the headers from a tagged release
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/prayertimes.h
-curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/v0.1.0/timezone.h
+curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/2026.08.18/prayertimes.h
+curl -O https://raw.githubusercontent.com/muslimtify-org/libmuslim/2026.08.18/timezone.h
 ```
 
 Pin the tag rather than `main`. `main` moves, and a header that silently changes
 under a vendored copy is the failure this convention is meant to avoid. The
 latest tag is on the
 [releases page](https://github.com/muslimtify-org/libmuslim/releases).
+
+:::note Tag and header version are different numbers
+The tag is a calendar date. Each header carries its own semantic version in its
+banner, and they move independently, so `2026.08.18` contains `prayertimes.h`
+`v0.1.1` alongside `hijri.h` and `timezone.h` at `v0.1.0`. That is expected, not
+a mismatch. Pin the tag to fetch a file, read the header version to reason about
+compatibility.
+:::
+
 
 Then compile, linking the math library (`-lm`) that `prayertimes.h` needs:
 
