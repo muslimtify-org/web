@@ -36,7 +36,7 @@ The minimum Dart SDK is **3.12**, and a C toolchain must be available at build t
 Importing the specific module is preferred: it keeps the import list honest about what a file actually uses, and it is what will keep working unchanged as more modules land.
 
 :::note
-Unlike the Rust binding, libmuslim_dart does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling — you supply the UTC offset yourself. See [Time zones](#time-zones) below.
+Unlike the Rust binding, libmuslim_dart does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling, so you supply the UTC offset yourself. See [Time zones](#time-zones) below.
 :::
 
 ## What the binding adds over the C API
@@ -51,13 +51,13 @@ The binding is deliberately thin. It exposes what `prayertimes.h` exposes and no
 
 **The null-pointer crash is unreachable.** `calculate_prayer_times()` in C dereferences its `params` pointer unconditionally, so passing null segfaults the process with no Dart stack trace. Callers of this binding never supply a pointer, so the crash cannot be reached.
 
-**The shared method table is never mutated.** `method_params_get()` returns a pointer into C static storage shared by the whole process. When you override a method's Asr school or ihtiyat, the binding copies the entry into a fresh allocation, applies your change there, and frees it — the table other callers read is left untouched.
+**The shared method table is never mutated.** `method_params_get()` returns a pointer into C static storage shared by the whole process. When you override a method's Asr school or ihtiyat, the binding copies the entry into a fresh allocation, applies your change there, and frees it, so the table other callers read is left untouched.
 
 ## The FFI layer is not public
 
 The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim_dart/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
 
-This is deliberate. Those names, their struct layouts and their failure modes all come from C and change whenever the vendored header changes; treating them as public API would make every regeneration a breaking change.
+This is deliberate. Those names, their struct layouts and their failure modes all come from C and change whenever the vendored header changes, so treating them as public API would make every regeneration a breaking change.
 
 ## Time zones
 

@@ -7,7 +7,7 @@ sidebar_position: 3
 
 Complete reference for the public interface of `libmuslim_dart`. Every symbol below is exported from `package:libmuslim_dart/prayertimes.dart`.
 
-Nothing else is public. The generated FFI bindings live under `lib/src/` and are deliberately not exported — see [the overview](./overview#the-ffi-layer-is-not-public).
+Nothing else is public. The generated FFI bindings live under `lib/src/` and are deliberately not exported, see [the overview](./overview#the-ffi-layer-is-not-public).
 
 ## `PrayerTimes`
 
@@ -28,7 +28,7 @@ factory PrayerTimes.forDate(
 
 Calculates all seven times for the civil date of `date`.
 
-Only `date`'s year, month and day are read. The C library takes a civil date rather than an instant, so whichever zone `date` carries is irrelevant — `DateTime.utc(2026, 7, 12)` and a local `DateTime(2026, 7, 12)` give the same result.
+Only `date`'s year, month and day are read. The C library takes a civil date rather than an instant, so whichever zone `date` carries is irrelevant, and `DateTime.utc(2026, 7, 12)` and a local `DateTime(2026, 7, 12)` give the same result.
 
 `utcOffset` must be the offset applicable to that date, which is not necessarily the offset applicable today.
 
@@ -52,7 +52,7 @@ Today's times. "Today" is the civil date at `utcOffset`, not on the device: a ca
 
 Seven `DateTime` fields: `fajr`, `sunrise`, `dhuha`, `dhuhr`, `asr`, `maghrib`, `isha`.
 
-Every one is **UTC**, and carries whole minutes only — `second`, `millisecond` and `microsecond` are always zero.
+Every one is **UTC**, and carries whole minutes only, so `second`, `millisecond` and `microsecond` are always zero.
 
 :::note
 Times round **up** to the whole minute. This reproduces the C `format_time_hm()`, whose ceiling convention means a displayed time is never earlier than the calculated one. The rounding is applied uniformly, sunrise included, because that is what the C formatter does.
@@ -86,9 +86,9 @@ Duration? timeUntilNext([DateTime? at])
 
 `timeOf` returns the time of any member of `Prayer`, sunrise and dhuha included.
 
-`current` returns the prayer whose window `at` falls in; `next` returns the first prayer after `at`. Both **skip sunrise and dhuha**, which are reported times but not prayers.
+`current` returns the prayer whose window `at` falls in, and `next` returns the first prayer after `at`. Both **skip sunrise and dhuha**, which are reported times but not prayers.
 
-Both are nullable, and null means "outside this day's range": `current` is null before Fajr, `next` is null after Isha. They do not wrap to the neighbouring day — these are one day's times, and the answer past Isha belongs to the next day's object. Construct it yourself when you need a rolling view.
+Both are nullable, and null means "outside this day's range": `current` is null before Fajr, `next` is null after Isha. They do not wrap to the neighbouring day, because these are one day's times, and the answer past Isha belongs to the next day's object. Construct it yourself when you need a rolling view.
 
 `at` defaults to `DateTime.now()` and is compared as an instant, so a `DateTime` in any zone works.
 
@@ -142,7 +142,7 @@ print(CalculationMethod.kemenag.key);           // kemenag
 Both are read from the C method table on each access rather than duplicated in Dart, so the two cannot drift apart.
 
 :::note
-The C `CALC_CUSTOM` and `CALC_COUNT` have no member here. `COUNT` is a sentinel rather than a method, and a custom method is expressed by [`CalculationParameters.custom`](#calculationparameterscustom) rather than by an enum value — which also means there is no equivalent of the C `method_from_string()`, whose habit of returning `CALC_CUSTOM` for an unrecognized name turns a typo into silently wrong parameters.
+The C `CALC_CUSTOM` and `CALC_COUNT` have no member here. `COUNT` is a sentinel rather than a method, and a custom method is expressed by [`CalculationParameters.custom`](#calculationparameterscustom) rather than by an enum value. That also means there is no equivalent of the C `method_from_string()`, whose habit of returning `CALC_CUSTOM` for an unrecognized name turns a typo into silently wrong parameters.
 :::
 
 ### Built-in presets
@@ -199,7 +199,7 @@ const CalculationParameters.of(
 
 A published method, optionally with the two adjustments practitioners vary. Leaving both overrides null passes the C library's own table entry through untouched and allocates nothing.
 
-Being `const`, it is usable as a default argument — which is how `PrayerTimes.forDate` defaults to `CalculationMethod.mwl`. A `const` constructor cannot throw, so a negative `ihtiyat` is rejected where the value is consumed, at the `PrayerTimes` call, rather than at construction. It is still an `ArgumentError`.
+Being `const`, it is usable as a default argument, which is how `PrayerTimes.forDate` defaults to `CalculationMethod.mwl`. A `const` constructor cannot throw, so a negative `ihtiyat` is rejected where the value is consumed, at the `PrayerTimes` call, rather than at construction. It is still an `ArgumentError`.
 
 ### `CalculationParameters.custom`
 
@@ -214,7 +214,7 @@ CalculationParameters.custom({
 })
 ```
 
-A method built from scratch. Not `const`; it validates eagerly and throws `ArgumentError` at construction for:
+A method built from scratch. It is not `const`, and it validates eagerly, throwing `ArgumentError` at construction for:
 
 - neither or both of `ishaAngle` and `ishaInterval`
 - `fajrAngle` or `ishaAngle` non-finite or outside 0 to 90 degrees
@@ -246,7 +246,7 @@ final class PrayerTimesUnavailable implements Exception {
 
 Thrown when the C library cannot produce a finite time for one or more prayers. The overwhelmingly common cause is a high latitude where the sun never reaches the depression angle the method requires.
 
-`prayers` lists exactly which ones failed, and which they are depends on the season — at 69.6°N, midsummer loses Fajr, sunrise, Maghrib and Isha, while midwinter loses sunrise, dhuha and Maghrib instead. Read the list rather than assuming.
+`prayers` lists exactly which ones failed, and which they are depends on the season. At 69.6°N, midsummer loses Fajr, sunrise, Maghrib and Isha, while midwinter loses sunrise, dhuha and Maghrib instead. Read the list rather than assuming.
 
 `toString()` names the affected prayers, the date and the coordinates:
 
@@ -276,10 +276,10 @@ The binding exposes what `prayertimes.h` exposes and adds no calculation feature
 | --- | --- |
 | `calculate_prayer_times()` takes seven loose scalars | `PrayerTimes.forDate()` takes named arguments, validated before the call |
 | Times are returned as `double` decimal hours | Times are UTC `DateTime` instants |
-| `format_time_hm()` writes into a caller-supplied buffer | Not needed; the ceiling convention is applied when the instant is built |
-| `method_params_get()` returns a pointer into static storage | `CalculationParameters` copies before it modifies; the shared table is never written to |
-| `method_from_string()` returns `CALC_CUSTOM` for an unknown name | No equivalent; a custom method is a constructor, not a name lookup |
-| Passing a null `params` segfaults the process | Unreachable; callers never supply a pointer |
+| `format_time_hm()` writes into a caller-supplied buffer | Not needed, the ceiling convention is applied when the instant is built |
+| `method_params_get()` returns a pointer into static storage | `CalculationParameters` copies before it modifies, so the shared table is never written to |
+| `method_from_string()` returns `CALC_CUSTOM` for an unknown name | No equivalent, a custom method is a constructor, not a name lookup |
+| Passing a null `params` segfaults the process | Unreachable, callers never supply a pointer |
 | A prayer with no solution yields a non-finite `double` | `PrayerTimesUnavailable` |
 | An out-of-range latitude yields `NaN` | `ArgumentError` |
 | `HighLatMethod` is declared in the header | Not exposed. `MethodParams` has no high-latitude field and `calculate_prayer_times()` never reads one, so it would be a lever wired to nothing |

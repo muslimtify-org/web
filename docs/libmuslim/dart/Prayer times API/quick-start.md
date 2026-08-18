@@ -28,7 +28,7 @@ A C toolchain must be available at build time, because the package compiles the 
 import 'package:libmuslim_dart/prayertimes.dart';
 
 /// Jakarta's offset. Every time comes back in UTC, so rendering it for a
-/// reader means adding the offset of the place it describes — not the
+/// reader means adding the offset of the place it describes, not the
 /// device's, which is unrelated.
 const jakarta = Duration(hours: 7);
 
@@ -116,7 +116,7 @@ print(times.timeUntilNext(at));                // 2:23:00.000000
 
 ## Adjusting a method
 
-`CalculationParameters.of` takes the two adjustments practitioners actually vary — the Asr school and the precautionary ihtiyat minutes:
+`CalculationParameters.of` takes the two adjustments practitioners actually vary, the Asr school and the precautionary ihtiyat minutes:
 
 ```dart
 const hanafi = CalculationParameters.of(
@@ -172,8 +172,8 @@ try {
 }
 ```
 
-Above the Arctic Circle the sun does not set in midsummer, so Fajr, sunrise, Maghrib and Isha have no solution on that date. The same location on 21 December fails differently — sunrise, dhuha and Maghrib — because the sun does not rise. Which prayers are affected depends on the date, so read `prayers` rather than assuming.
+Above the Arctic Circle the sun does not set in midsummer, so Fajr, sunrise, Maghrib and Isha have no solution on that date. The same location on 21 December fails differently, losing sunrise, dhuha and Maghrib instead, because the sun does not rise. Which prayers are affected depends on the date, so read `prayers` rather than assuming.
 
-Catch `ArgumentError` and `PrayerTimesUnavailable` separately — the first means your input was wrong, the second means the input was fine and the sky did not cooperate.
+Catch `ArgumentError` and `PrayerTimesUnavailable` separately, because the first means your input was wrong, the second means the input was fine and the sky did not cooperate.
 
 See the [API reference](./api-reference) for the full list of types and members.
