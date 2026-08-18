@@ -1,0 +1,9 @@
+{
+  "label": "Prayer times API",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "title": "Prayer times API (Dart)",
+    "description": "Calculate daily prayer times from Dart or Flutter using the libmuslim_dart package, an idiomatic Dart API over the libmuslim C engine with 21 international calculation methods. Start with the overview, follow the quick start, then dive into the full API reference."
+  }
+}

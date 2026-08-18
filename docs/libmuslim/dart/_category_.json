@@ -1,0 +1,9 @@
+{
+  "label": "Dart",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "title": "libmuslim Dart API",
+    "description": "Use libmuslim from Dart and Flutter through the libmuslim_dart package, which wraps the C sources in an idiomatic Dart API and compiles them as part of your build, with no separate installation and no FFI code of your own. These pages cover setup, a quick-start example, and the complete public API."
+  }
+}
