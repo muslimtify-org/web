@@ -116,6 +116,24 @@ struct PrayerTimes {
 };
 ```
 
+:::caution Values are not guaranteed to lie inside a single day
+A field is normally in the range 0 to 24, but at high latitude it may not be.
+
+Above roughly 66 degrees the Sun can fail to reach the altitude an event is
+defined by, and the field is then non-finite. Separately, the high-latitude
+fallback for fajr and isha can return a value below 0 or at or above 24, which
+means the event falls on the previous or the next calendar day.
+
+This matters if you convert a field into a date or a timestamp rather than
+printing it. The double carries the day offset and nothing else does, so
+reducing it into 0 to 24 yourself would silently move the event onto the wrong
+day. Check with `isfinite()` before using a field, and keep the whole value
+when you build an instant from it.
+
+`format_time_hm()` and `format_time_hms()` handle both cases, but a printed
+clock string cannot express a date, so they do not preserve the day offset.
+:::
+
 ### Functions
 
 #### `calculate_prayer_times`
@@ -179,6 +197,12 @@ Writes a decimal-hours value into `outBuffer` as `"HH:MM"`. Minutes are always
 rounded up, following the Kemenag convention. A buffer of 6 bytes or more is
 enough.
 
+A value outside 0 to 24 is first reduced onto the clock face, so `25.075`
+renders as `01:05` and `-0.104` as `23:54`. The output names an hour of the
+day and cannot say which day, so read the raw double if you need that.
+
+A non-finite value renders as `--:--`, which also fits in 6 bytes.
+
 #### `format_time_hms`
 
 ```c
@@ -188,6 +212,9 @@ void format_time_hms(double timeHours, char *outBuffer, size_t bufSize);
 Writes a decimal-hours value into `outBuffer` as `"HH:MM:SS"`. A buffer of 9
 bytes or more is enough. Seconds are rounded to nearest, so this does not
 follow the round-up-to-the-minute convention that `format_time_hm()` uses.
+
+The same reduction applies, so `-0.104` renders as `23:53:46`. A non-finite
+value renders as `--:--:--`, which also fits in 9 bytes.
 
 ### Calendar helpers
 
