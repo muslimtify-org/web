@@ -1,0 +1,9 @@
+{
+  "label": "Hijri calendar API",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "title": "Hijri calendar API (C)",
+    "description": "Convert between Gregorian and Hijri dates with hijri.h, a dependency-free C header covering tabular arithmetic, Sun and Moon positions, local crescent visibility predicates, and the Yallop and Odeh visibility models. Start with the overview, follow the quick start, then dive into the full API reference."
+  }
+}
