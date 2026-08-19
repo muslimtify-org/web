@@ -176,7 +176,9 @@ An Isha angle of 0 paired with a non-zero interval means that method defines Ish
 
 #### `PrayerTimes`
 
-The result of a calculation. Seven public `PrayerTime` fields: `fajr`, `sunrise`, `dhuha`, `dhuhr`, `asr`, `maghrib`, `isha`.
+The result of a calculation. Five public `PrayerTime` fields: `fajr`, `dhuhr`, `asr`, `maghrib`, `isha`.
+
+`sunrise` and `dhuha` were removed in `prayertimes.h` `v0.2.0`, along with `constants::DHUHA_ALTITUDE`. Neither is a prescribed prayer: sunrise is the end of the fajr window, and dhuha is a voluntary prayer carried only by Indonesian timetables.
 
 #### `PrayerTime`
 

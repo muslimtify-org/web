@@ -75,7 +75,7 @@ curl -LO https://github.com/muslimtify-org/libmuslim/releases/latest/download/ti
 To pin a specific release instead, name the tag:
 
 ```bash
-curl -LO https://github.com/muslimtify-org/libmuslim/releases/download/2026.08.18/prayertimes.h
+curl -LO https://github.com/muslimtify-org/libmuslim/releases/download/2026.08.19/prayertimes.h
 ```
 
 Either form is fine, and neither is `main`. `main` moves under you between
@@ -90,11 +90,7 @@ a vendored file is, read the banner at the top of it. Every release is on the
 [releases page](https://github.com/muslimtify-org/libmuslim/releases).
 
 :::note Tag and header version are different numbers
-The tag is a calendar date. Each header carries its own semantic version in its
-banner, and they move independently, so `2026.08.18` contains `prayertimes.h`
-`v0.1.1` alongside `hijri.h` and `timezone.h` at `v0.1.0`. That is expected, not
-a mismatch. Pin the tag to fetch a file, read the header version to reason about
-compatibility.
+The tag is a calendar date. Each header carries its own semantic version in its banner, and they move independently, so `2026.08.19` contains `prayertimes.h` `v0.2.0` alongside `hijri.h` and `timezone.h` at `v0.1.0`. That is expected, not a mismatch. Pin the tag to fetch a file, read the header version to reason about compatibility.
 :::
 
 

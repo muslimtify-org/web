@@ -100,7 +100,7 @@ You can also define a **custom method** by setting `"method": "custom"` in `conf
 
 ## Prayers and offsets
 
-Each prayer can be enabled or disabled, and given a per-prayer time `offset` (in minutes) to match your local mosque. Sunrise and Dhuha are disabled by default.
+Each of the five prescribed prayers can be enabled or disabled, and given a per-prayer time `offset` (in minutes) to match your local mosque. All five are enabled by default. `sunrise` and `dhuha` were configurable until `prayertimes.h` `v0.2.0` removed them, and a config file that still carries either block keeps loading, but the block has no effect.
 
 ```json
 "asr": {
@@ -161,8 +161,6 @@ Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per p
   },
   "prayers": {
     "fajr":    { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
-    "sunrise": { "enabled": false, "adhan": "", "adhan_enabled": false, "reminders": [],          "offset": 0 },
-    "dhuha":   { "enabled": false, "adhan": "", "adhan_enabled": false, "reminders": [],          "offset": 0 },
     "dhuhr":   { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
     "asr":     { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
     "maghrib": { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },

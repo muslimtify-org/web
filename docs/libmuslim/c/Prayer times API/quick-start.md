@@ -29,8 +29,6 @@ int main(void) {
     // 3. Format the results. Times come back as decimal hours.
     char buf[16];
     format_time_hm(t.fajr, buf, sizeof buf);    printf("Fajr     %s\n", buf);
-    format_time_hm(t.sunrise, buf, sizeof buf); printf("Sunrise  %s\n", buf);
-    format_time_hm(t.dhuha, buf, sizeof buf);   printf("Dhuha    %s\n", buf);
     format_time_hm(t.dhuhr, buf, sizeof buf);   printf("Dhuhr    %s\n", buf);
     format_time_hm(t.asr, buf, sizeof buf);     printf("Asr      %s\n", buf);
     format_time_hm(t.maghrib, buf, sizeof buf); printf("Maghrib  %s\n", buf);
@@ -48,12 +46,10 @@ cc example.c -lm -o example
 
 ```text title="Output"
 Fajr     04:44
-Sunrise  06:03
-Dhuha    06:28
 Dhuhr    12:01
 Asr      15:23
 Maghrib  17:54
-Isha     19:08
+Isha     19:09
 ```
 
 :::note
