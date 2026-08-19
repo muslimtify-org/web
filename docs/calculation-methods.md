@@ -24,9 +24,7 @@ Each built-in method sets a handful of parameters:
   Isha as a fixed number of minutes after Maghrib instead of an angle.
 - **Maghrib offset**: a small number of minutes added after sunset. Only Portugal
   and the Moonsighting Committee use one (3 minutes).
-- **Ihtiyat**: a precautionary margin added to every prayer time. Only Kemenag
-  (+2 min) and Jordan (+5 min) apply one, every other method uses 0. Sunrise gets
-  the same margin subtracted rather than added.
+- **Ihtiyat**: a precautionary margin added to every prayer time. Only Kemenag (+2 min) and Jordan (+5 min) apply one, every other method uses 0.
 
 The Asr time is **not** part of the method. It is controlled separately by your
 madzhab and applies identically across every method, see
@@ -34,9 +32,7 @@ madzhab and applies identically across every method, see
 
 ## Method parameters
 
-All angles are in degrees. "Isha interval" is minutes after Maghrib, used when the
-method is not angle-based. "Ihtiyat" is the precautionary margin added to each
-prayer (and subtracted from sunrise).
+All angles are in degrees. "Isha interval" is minutes after Maghrib, used when the method is not angle-based. "Ihtiyat" is the precautionary margin added to each prayer.
 
 | Key | Organization | Fajr | Isha angle | Isha interval | Maghrib offset | Ihtiyat |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -48,13 +44,13 @@ prayer (and subtracted from sunrise).
 | `turkey` | Diyanet, Turkey | 18.0 | 17.0 | — | 0 | 0 |
 | `singapore` | MUIS, Singapore | 20.0 | 18.0 | — | 0 | 0 |
 | `jakim` | JAKIM, Malaysia | 20.0 | 18.0 | — | 0 | 0 |
-| `kemenag` | Kemenag, Indonesia (default) | 20.0 | 18.0 | — | 0 | +2 (−2 sunrise) |
+| `kemenag` | Kemenag, Indonesia (default) | 20.0 | 18.0 | — | 0 | +2 |
 | `france` | UOIF, France | 12.0 | 12.0 | — | 0 | 0 |
 | `russia` | Spiritual Administration, Russia | 16.0 | 15.0 | — | 0 | 0 |
 | `dubai` | GAIAE, Dubai | 18.2 | 18.2 | — | 0 | 0 |
 | `qatar` | Ministry of Awqaf, Qatar | 18.0 | — | 90 min | 0 | 0 |
 | `kuwait` | Ministry of Awqaf, Kuwait | 18.0 | 17.5 | — | 0 | 0 |
-| `jordan` | Ministry of Awqaf, Jordan | 18.0 | 18.0 | — | 0 | +5 (−5 sunrise) |
+| `jordan` | Ministry of Awqaf, Jordan | 18.0 | 18.0 | — | 0 | +5 |
 | `gulf` | Gulf Region (general) | 19.5 | — | 90 min | 0 | 0 |
 | `tunisia` | Ministry of Religious Affairs | 18.0 | 18.0 | — | 0 | 0 |
 | `algeria` | Ministry of Religious Affairs | 18.0 | 17.0 | — | 0 | 0 |
@@ -91,21 +87,12 @@ Where these differences matter for your local mosque, use the per-prayer
 
 ## Notable per-method details (as implemented)
 
-- **Kemenag (`kemenag`, default)**: applies an *ihtiyat* precaution of +2 minutes to
-  every prayer (and −2 minutes to sunrise). See
-  [Kemenag, the default](#kemenag-the-default).
-- **Jordan (`jordan`)**: applies a +5 minute *ihtiyat* to every prayer (and −5
-  minutes to sunrise). This is a whole-schedule margin, not a Maghrib-only offset.
+- **Kemenag (`kemenag`, default)**: applies an *ihtiyat* precaution of +2 minutes to every prayer. See [Kemenag, the default](#kemenag-the-default).
+- **Jordan (`jordan`)**: applies a +5 minute *ihtiyat* to every prayer. This is a whole-schedule margin, not a Maghrib-only offset.
 - **Portugal (`portugal`)**: Isha is a fixed 77-minute interval after Maghrib, and
   Maghrib itself is set 3 minutes after sunset.
 - **Moonsighting (`moonsighting`)**: Maghrib is set 3 minutes after sunset, Fajr and
   Isha use the 18° angle.
-
-## Dhuha
-
-Muslimtify also computes a **Dhuha** time (sun altitude 4.3°, about 4°18′, above
-the eastern horizon) for every method, though it is disabled by default. Enable it with
-`muslimtify notification enable dhuha`.
 
 ## Asr and madzhab
 
@@ -128,7 +115,7 @@ Muslimtify originated in Indonesia and Kemenag is a well-validated, widely-used
 standard there. Its parameters:
 
 - Fajr angle **20°**, Isha angle **18°** (shared with JAKIM and MUIS).
-- **Ihtiyat**: +2 minutes on all prayer times, −2 minutes on sunrise.
+- **Ihtiyat**: +2 minutes on all prayer times.
 - **Rounding**: always rounds up (ceiling) to the next minute.
 
 Academic comparisons of calculation against observation in Indonesia find
@@ -152,12 +139,9 @@ per-prayer **offset** in [Configuration](./configuration.md#prayers-and-offsets)
 
 ## High latitudes
 
-At high latitudes (roughly above 48–50° N/S) the sun may never reach the required
-depression angle in summer, so the standard Fajr/Isha formula has no solution. When
-that happens, Muslimtify falls back to the **angle-based** approximation: it treats
-the twilight angle as a fraction of the night and places Fajr and Isha that fraction
-before sunrise / after sunset. If you live at a high latitude and see unusual Fajr or
-Isha times around the solstices, this is why.
+At high latitudes (roughly above 48–50° N/S) the sun may never reach the required depression angle in summer, so the standard Fajr/Isha formula has no solution. When that happens, and a real night still exists, Muslimtify falls back to the **angle-based** approximation: it treats the twilight angle as a fraction of the night and places Fajr and Isha that fraction before sunrise / after sunset. If you live at a high latitude and see unusual Fajr or Isha times around the solstices, this is why.
+
+Inside the polar circle there is no sunrise or sunset at all, so there is no night to take a fraction of and the approximation above is undefined. Since `prayertimes.h` `v0.2.0` the answer to that case belongs to the calculation method rather than being applied to all of them alike. Only **MWL** and **Moonsighting** carry a reference latitude for it, 45° and 60° respectively, because those are the only two authorities that publish a position. Under any other method, prayers with no solution are reported as unavailable rather than guessed at, so that Muslimtify does not attribute a ruling to an authority that never issued one.
 
 ## Custom method
 

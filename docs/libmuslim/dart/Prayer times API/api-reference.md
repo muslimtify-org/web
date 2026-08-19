@@ -50,12 +50,14 @@ Today's times. "Today" is the civil date at `utcOffset`, not on the device: a ca
 
 ### Times
 
-Seven `DateTime` fields: `fajr`, `sunrise`, `dhuha`, `dhuhr`, `asr`, `maghrib`, `isha`.
+Five `DateTime` fields: `fajr`, `dhuhr`, `asr`, `maghrib`, `isha`.
+
+`sunrise` and `dhuha` were removed in `prayertimes.h` `v0.2.0`. Neither is a prescribed prayer: sunrise is the end of the fajr window, and dhuha is a voluntary prayer carried only by Indonesian timetables.
 
 Every one is **UTC**, and carries whole minutes only, so `second`, `millisecond` and `microsecond` are always zero.
 
 :::note
-Times round **up** to the whole minute. This reproduces the C `format_time_hm()`, whose ceiling convention means a displayed time is never earlier than the calculated one. The rounding is applied uniformly, sunrise included, because that is what the C formatter does.
+Times round **up** to the whole minute. This reproduces the C `format_time_hm()`, whose ceiling convention means a displayed time is never earlier than the calculated one. The rounding is applied uniformly to every field, because that is what the C formatter does.
 :::
 
 A UTC instant is not a wall-clock time. To render one for a reader, add the offset of the place it describes:
@@ -84,9 +86,9 @@ Prayer? next([DateTime? at])
 Duration? timeUntilNext([DateTime? at])
 ```
 
-`timeOf` returns the time of any member of `Prayer`, sunrise and dhuha included.
+`timeOf` returns the time of any member of `Prayer`.
 
-`current` returns the prayer whose window `at` falls in, and `next` returns the first prayer after `at`. Both **skip sunrise and dhuha**, which are reported times but not prayers.
+`current` returns the prayer whose window `at` falls in, and `next` returns the first prayer after `at`. Since `v0.2.0` every member of `Prayer` is a prescribed prayer, so neither method skips anything.
 
 Both are nullable, and null means "outside this day's range": `current` is null before Fajr, `next` is null after Isha. They do not wrap to the neighbouring day, because these are one day's times, and the answer past Isha belongs to the next day's object. Construct it yourself when you need a rolling view.
 
@@ -95,10 +97,10 @@ Both are nullable, and null means "outside this day's range": `current` is null 
 ## `Prayer`
 
 ```dart
-enum Prayer { fajr, sunrise, dhuha, dhuhr, asr, maghrib, isha }
+enum Prayer { fajr, dhuhr, asr, maghrib, isha }
 ```
 
-`sunrise` and `dhuha` are members so `timeOf` can return them, but they are not prayers and `current` and `next` skip both.
+`sunrise` and `dhuha` were members until `prayertimes.h` `v0.2.0` removed them. Every remaining member is a prescribed prayer, so there is no longer a distinction between a member of `Prayer` and a prayer.
 
 ## `CalculationMethod`
 
@@ -246,12 +248,14 @@ final class PrayerTimesUnavailable implements Exception {
 
 Thrown when the C library cannot produce a finite time for one or more prayers. The overwhelmingly common cause is a high latitude where the sun never reaches the depression angle the method requires.
 
-`prayers` lists exactly which ones failed, and which they are depends on the season. At 69.6°N, midsummer loses Fajr, sunrise, Maghrib and Isha, while midwinter loses sunrise, dhuha and Maghrib instead. Read the list rather than assuming.
+`prayers` lists exactly which ones failed, and which they are depends on the season **and on the method**. Since `v0.2.0` the high-latitude rule belongs to the calculation method, so MWL and Moonsighting carry a reference latitude for the polar case and resolve every prayer at every latitude, while the other 20 methods do not.
+
+Under Kemenag at 69.6°N, midsummer loses Fajr, Maghrib and Isha, while midwinter loses only Maghrib. Under the default MWL parameters neither date throws at all. Read the list rather than assuming.
 
 `toString()` names the affected prayers, the date and the coordinates:
 
 ```text
-PrayerTimesUnavailable: no fajr, sunrise, maghrib, isha on 2026-06-21 at latitude 69.6496, longitude 18.956
+PrayerTimesUnavailable: no fajr, maghrib, isha on 2026-06-21 at latitude 69.6496, longitude 18.956
 ```
 
 ## Errors at a glance

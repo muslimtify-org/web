@@ -37,8 +37,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let times = calculate(date, jakarta, offset, &params)?;
 
     println!("Fajr     {}", times.fajr.format_hm());
-    println!("Sunrise  {}", times.sunrise.format_hm());
-    println!("Dhuha    {}", times.dhuha.format_hm());
     println!("Dhuhr    {}", times.dhuhr.format_hm());
     println!("Asr      {}", times.asr.format_hm());
     println!("Maghrib  {}", times.maghrib.format_hm());
@@ -55,12 +53,10 @@ cargo run
 
 ```text title="Output"
 Fajr     04:44
-Sunrise  06:03
-Dhuha    06:28
 Dhuhr    12:01
 Asr      15:23
 Maghrib  17:54
-Isha     19:08
+Isha     19:09
 ```
 
 :::note

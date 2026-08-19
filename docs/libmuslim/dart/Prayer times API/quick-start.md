@@ -48,8 +48,6 @@ void main() {
   );
 
   print('Fajr     ${hm(times.fajr)}');
-  print('Sunrise  ${hm(times.sunrise)}');
-  print('Dhuha    ${hm(times.dhuha)}');
   print('Dhuhr    ${hm(times.dhuhr)}');
   print('Asr      ${hm(times.asr)}');
   print('Maghrib  ${hm(times.maghrib)}');
@@ -65,8 +63,6 @@ dart run
 
 ```text title="Output"
 Fajr     04:44
-Sunrise  06:03
-Dhuha    06:28
 Dhuhr    12:01
 Asr      15:23
 Maghrib  17:54
@@ -94,7 +90,7 @@ final times = PrayerTimes.today(
 
 ## What is next, and when
 
-`current` and `next` skip sunrise and dhuha, which are reported times but not prayers. Both are null outside the day's range: `current` before Fajr, `next` after Isha.
+`Prayer` is exactly the five prescribed prayers, so `current` and `next` no longer skip anything. Both are null outside the day's range: `current` before Fajr, `next` after Isha.
 
 ```dart
 final upcoming = times.next();          // Prayer.asr, say
@@ -161,18 +157,21 @@ try {
     latitude: 69.6496,        // Tromsø, midsummer
     longitude: 18.9560,
     utcOffset: const Duration(hours: 2),
+    parameters: const CalculationParameters.of(CalculationMethod.kemenag),
   );
   print(times.fajr);
 } on PrayerTimesUnavailable catch (e) {
   print(e.prayers);
-  // [Prayer.fajr, Prayer.sunrise, Prayer.maghrib, Prayer.isha]
+  // [Prayer.fajr, Prayer.maghrib, Prayer.isha]
   print(e);
-  // PrayerTimesUnavailable: no fajr, sunrise, maghrib, isha on 2026-06-21
+  // PrayerTimesUnavailable: no fajr, maghrib, isha on 2026-06-21
   // at latitude 69.6496, longitude 18.956
 }
 ```
 
-Above the Arctic Circle the sun does not set in midsummer, so Fajr, sunrise, Maghrib and Isha have no solution on that date. The same location on 21 December fails differently, losing sunrise, dhuha and Maghrib instead, because the sun does not rise. Which prayers are affected depends on the date, so read `prayers` rather than assuming.
+Whether this throws at all depends on the calculation method, which changed in `prayertimes.h` `v0.2.0`. The high-latitude rule is now a property of the method rather than a global fallback. MWL and Moonsighting carry a reference latitude for the polar case, so under the default MWL parameters this same call **succeeds** and returns a Fajr of `00:27`. Kemenag publishes no such rule and so carries no reference latitude, which is why the example names it explicitly.
+
+Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses only Maghrib, because the sun does not rise. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
 
 Catch `ArgumentError` and `PrayerTimesUnavailable` separately, because the first means your input was wrong, the second means the input was fine and the sky did not cooperate.
 

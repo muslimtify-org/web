@@ -202,14 +202,14 @@ muslimtify notification --json       # show settings as JSON
 muslimtify notification --headless   # show settings as key=value
 ```
 
-Prayer names accepted below are `fajr`, `sunrise`, `dhuha`, `dhuhr`, `asr`, `maghrib`, and `isha` (or `all`).
+Prayer names accepted below are `fajr`, `dhuhr`, `asr`, `maghrib`, and `isha` (or `all`). `sunrise` and `dhuha` were accepted until `prayertimes.h` `v0.2.0` removed them, since neither is a prescribed prayer.
 
 ### Enable / disable a prayer
 
 ```bash
-muslimtify notification enable fajr     # enable Fajr notifications
-muslimtify notification disable sunrise # disable Sunrise notifications
-muslimtify notification enable all      # enable every prayer
+muslimtify notification enable fajr    # enable Fajr notifications
+muslimtify notification disable asr    # disable Asr notifications
+muslimtify notification enable all     # enable every prayer
 ```
 
 ### Reminders

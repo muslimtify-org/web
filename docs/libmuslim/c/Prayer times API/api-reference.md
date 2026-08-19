@@ -65,14 +65,16 @@ The value corresponds to the `asr_shadow` field of `MethodParams`.
 
 #### `HighLatMethod`
 
-Strategy for high-latitude locations where the sun may not reach the required
-depression angle. The enumerators are `HIGHLAT_NONE`,
-`HIGHLAT_MIDDLE_OF_NIGHT`, `HIGHLAT_ONE_SEVENTH` and `HIGHLAT_ANGLE_BASED`.
+Strategy for high-latitude locations where the Sun may not reach the required depression angle. The enumerators are `HIGHLAT_NONE`, `HIGHLAT_MIDDLE_OF_NIGHT`, `HIGHLAT_ONE_SEVENTH`, `HIGHLAT_ANGLE_BASED` and `HIGHLAT_NEAREST_LATITUDE`.
 
-:::note
-`calculate_prayer_times()` currently applies an angle-based night fraction as its
-automatic fallback when an angle cannot be satisfied. This enum is provided for
-callers and future configuration.
+Since `v0.2.0` this is a property of the calculation method rather than a global fallback. `MethodParams` carries `high_lat_method` and `high_lat_ref`, and `calculate_prayer_times()` reads them.
+
+Every value except `HIGHLAT_NEAREST_LATITUDE` is defined in terms of the interval between sunset and sunrise, so none of them can answer inside the polar circle, where that interval does not exist. `high_lat_ref` supplies a reference latitude for exactly that case, and it is consulted only there.
+
+:::note Most methods carry no rule, and that is deliberate
+Only two of the researched authorities publish a position. `CALC_MWL` carries `HIGHLAT_ANGLE_BASED` with a reference latitude of 45, which its own Fiqh Council decree names. `CALC_MOONSIGHTING` carries `HIGHLAT_ONE_SEVENTH` anchored at 60, which its published page states.
+
+The other 20 methods carry no reference latitude, so inside the polar circle their prescribed times are non-finite rather than substituted. The library declines to attribute a ruling to an authority that never issued one. Tracked as [libmuslim#51](https://github.com/muslimtify-org/libmuslim/issues/51).
 :::
 
 #### `MidnightMode`
@@ -95,20 +97,18 @@ typedef struct {
   int asr_shadow;       // 1 = standard, 2 = Hanafi (see AsrSchool)
   MidnightMode midnight_mode;
   int ihtiyat;          // precautionary minutes added to each time
+  HighLatMethod high_lat_method; // rule this authority publishes, if any
+  double high_lat_ref;  // reference latitude for the polar case; 0 => none
 } MethodParams;
 ```
 
 #### `struct PrayerTimes`
 
-The computed times, each expressed as **decimal hours** in local time (for
-example `17.75` means 17:45). Use `format_time_hm()` or `format_time_hms()` to
-render them.
+The five prescribed prayer times, each expressed as **decimal hours** in local time (for example `17.75` means 17:45). Use `format_time_hm()` or `format_time_hms()` to render them.
 
 ```c
 struct PrayerTimes {
   double fajr;
-  double sunrise;
-  double dhuha;   // Dhuha (roughly 28-30 min after sunrise for Kemenag)
   double dhuhr;
   double asr;
   double maghrib;
@@ -116,13 +116,16 @@ struct PrayerTimes {
 };
 ```
 
+:::info `sunrise` and `dhuha` were removed in `v0.2.0`
+Neither is a prescribed prayer. Sunrise is the end of the fajr window, and dhuha is a voluntary prayer carried only by Indonesian timetables.
+
+Both are still computed inside the library, because maghrib is sunset and every high-latitude substitution measures the night between sunset and sunrise, but neither is part of the contract. Code reading `t.sunrise` or `t.dhuha` will not compile against `v0.2.0`.
+:::
+
 :::caution Values are not guaranteed to lie inside a single day
 A field is normally in the range 0 to 24, but at high latitude it may not be.
 
-Above roughly 66 degrees the Sun can fail to reach the altitude an event is
-defined by, and the field is then non-finite. Separately, the high-latitude
-fallback for fajr and isha can return a value below 0 or at or above 24, which
-means the event falls on the previous or the next calendar day.
+Above roughly 66 degrees the Sun can fail to reach the altitude an event is defined by, and the field is then non-finite. This depends on the method: those carrying a `high_lat_ref`, currently MWL and Moonsighting, resolve every field at every latitude, and the other 20 do not. Separately, the high-latitude fallback for fajr and isha can return a value below 0 or at or above 24, which means the event falls on the previous or the next calendar day.
 
 This matters if you convert a field into a date or a timestamp rather than
 printing it. The double carries the day offset and nothing else does, so
