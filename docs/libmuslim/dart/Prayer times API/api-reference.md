@@ -248,7 +248,9 @@ final class PrayerTimesUnavailable implements Exception {
 
 Thrown when the C library cannot produce a finite time for one or more prayers. The overwhelmingly common cause is a high latitude where the sun never reaches the depression angle the method requires.
 
-`prayers` lists exactly which ones failed, and which they are depends on the season **and on the method**. Since `v0.2.0` the high-latitude rule belongs to the calculation method, so MWL and Moonsighting carry a reference latitude for the polar case and resolve every prayer at every latitude, while the other 20 methods do not.
+`prayers` lists exactly which ones failed, and which they are depends on the season **and on the method**. Since `v0.2.0` the high-latitude rule belongs to the calculation method, so MWL and Moonsighting carry a reference latitude for the polar case while the other 20 methods do not.
+
+Carrying one is not the same as always resolving. Since `v0.2.1` no method reports asr where the Sun casts no shadow, and at Longyearbyen there is a narrow band of four days a year where the Sun is visible only by refraction: sunrise exists and fajr, maghrib and isha all resolve, but nothing casts a shadow. On those days `prayers` is `[Prayer.asr]` even under MWL.
 
 Under Kemenag at 69.6°N, midsummer loses Fajr, Maghrib and Isha, while midwinter loses only Maghrib. Under the default MWL parameters neither date throws at all. Read the list rather than assuming.
 

@@ -125,7 +125,11 @@ Both are still computed inside the library, because maghrib is sunset and every 
 :::caution Values are not guaranteed to lie inside a single day
 A field is normally in the range 0 to 24, but at high latitude it may not be.
 
-Above roughly 66 degrees the Sun can fail to reach the altitude an event is defined by, and the field is then non-finite. This depends on the method: those carrying a `high_lat_ref`, currently MWL and Moonsighting, resolve every field at every latitude, and the other 20 do not. Separately, the high-latitude fallback for fajr and isha can return a value below 0 or at or above 24, which means the event falls on the previous or the next calendar day.
+Above roughly 66 degrees the Sun can fail to reach the altitude an event is defined by, and the field is then non-finite. This depends partly on the method: those carrying a `high_lat_ref`, currently MWL and Moonsighting, substitute the polar day from that reference latitude, and the other 20 report the affected times as unavailable.
+
+Carrying a reference latitude is not the same as always resolving. Since `v0.2.1` no method reports asr where the Sun casts no shadow, which is any day the separation between the latitude and the solar declination reaches 90 degrees. There is a narrow band, four days a year at Longyearbyen, where the Sun is visible only by refraction: sunrise exists and fajr, maghrib and isha all resolve, but nothing casts a shadow, so asr alone is non-finite even under MWL.
+
+Separately, the high-latitude fallback for fajr and isha can return a value below 0 or at or above 24, which means the event falls on the previous or the next calendar day.
 
 This matters if you convert a field into a date or a timestamp rather than
 printing it. The double carries the day offset and nothing else does, so
