@@ -169,7 +169,7 @@ try {
 }
 ```
 
-Whether this throws at all depends on the calculation method, which changed in `prayertimes.h` `v0.2.0`. The high-latitude rule is now a property of the method rather than a global fallback. MWL and Moonsighting carry a reference latitude for the polar case, so under the default MWL parameters this same call **succeeds** and returns a Fajr of `00:27`. Kemenag publishes no such rule and so carries no reference latitude, which is why the example names it explicitly.
+Whether this throws at all depends on the calculation method, which changed in `prayertimes.h` `v0.2.0`. The high-latitude rule is now a property of the method rather than a global fallback. MWL and Moonsighting carry a reference latitude for the polar case, so under the default MWL parameters this same call **succeeds** and returns a Fajr of `00:24`. Kemenag publishes no such rule and so carries no reference latitude, which is why the example names it explicitly.
 
 Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses only Maghrib, because the sun does not rise. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
 
