@@ -5,38 +5,42 @@ sidebar_position: 1
 
 # libmuslim Dart binding
 
-**libmuslim_dart** is the official Dart and Flutter binding for libmuslim. It wraps the C headers in an idiomatic Dart API: times come back as `DateTime` instants, invalid input throws `ArgumentError`, and no `dart:ffi` import or manual memory management is required of the caller.
+The **libmuslim** package on pub.dev is the official Dart and Flutter binding for the libmuslim C library. It wraps the C headers in an idiomatic Dart API: times come back as `DateTime` instants, invalid input throws `ArgumentError`, and no `dart:ffi` import or manual memory management is required of the caller.
 
 The C sources are vendored into the package and compiled by a build hook, so there is no system libmuslim to install and nothing to link by hand. Adding the dependency is the whole installation.
 
 ## Installing
 
-The package is not yet published on pub.dev. Depend on it by Git:
+The package is published on pub.dev as **libmuslim**, which is not the same string as the repository name, `libmuslim-dart`.
+
+```bash
+dart pub add libmuslim
+```
+
+Or by hand:
 
 ```yaml title="pubspec.yaml"
 dependencies:
-  libmuslim_dart:
-    git:
-      url: https://github.com/muslimtify-org/libmuslim-dart.git
+  libmuslim: ^0.1.0
 ```
 
 ```dart
-import 'package:libmuslim_dart/prayertimes.dart';
+import 'package:libmuslim/prayertimes.dart';
 ```
 
-The minimum Dart SDK is **3.12**, and a C toolchain must be available at build time because the vendored C sources are compiled as part of your build. Flutter 3.44 stable or newer is recommended for Flutter apps.
+The minimum Dart SDK is **3.12.2**, and a C toolchain must be available at build time because the vendored C sources are compiled as part of your build. Flutter 3.44 stable or newer is recommended for Flutter apps.
 
 ## Libraries
 
 | Import | Wraps | Purpose |
 | --- | --- | --- |
-| `package:libmuslim_dart/prayertimes.dart` | `prayertimes.h` | Pure astronomy. Turns a date, location and explicit UTC offset into prayer times. |
-| `package:libmuslim_dart/libmuslim_dart.dart` | everything | Convenience barrel that re-exports every module. |
+| `package:libmuslim/prayertimes.dart` | `prayertimes.h` | Pure astronomy. Turns a date, location and explicit UTC offset into prayer times. |
+| `package:libmuslim/libmuslim.dart` | everything | Convenience barrel that re-exports every module. |
 
 Importing the specific module is preferred: it keeps the import list honest about what a file actually uses, and it is what will keep working unchanged as more modules land.
 
 :::note
-Unlike the Rust binding, libmuslim_dart does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling, so you supply the UTC offset yourself. See [Time zones](#time-zones) below.
+Unlike the Rust binding, the Dart package does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling, so you supply the UTC offset yourself. See [Time zones](#time-zones) below.
 :::
 
 ## What the binding adds over the C API
@@ -55,7 +59,7 @@ The binding is deliberately thin. It exposes what `prayertimes.h` exposes and no
 
 ## The FFI layer is not public
 
-The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim_dart/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
+The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
 
 This is deliberate. Those names, their struct layouts and their failure modes all come from C and change whenever the vendored header changes, so treating them as public API would make every regeneration a breaking change.
 
@@ -73,7 +77,7 @@ The package builds and is tested on Linux x86-64. Android, iOS, macOS and Window
 
 ## License
 
-libmuslim_dart is released under the MIT License, the same as libmuslim itself.
+The Dart binding is released under the MIT License, the same as the C library it wraps.
 
 Continue to the [Quick start](./quick-start) for a complete working program, or jump to the [API reference](./api-reference) for every type and member.
 

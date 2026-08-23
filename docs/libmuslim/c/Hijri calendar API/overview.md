@@ -71,6 +71,56 @@ policy backed by the published Umm al-Qura table, and standalone
 implementations of the **Yallop** and **Odeh** visibility models, which grade
 visibility into zones rather than returning a yes or no.
 
+## Supported range
+
+Four things bound this header, and they bind in different places. Since `v0.1.1` the range is a measured contract rather than a description of whatever the tests happened to cover.
+
+| Bound | Range | What sits outside it |
+| --- | --- | --- |
+| **Validated** | 1900 to 2100 | Nothing is checked against an independent ephemeris, so the error bar below stops being measured |
+| **Umm al-Qura table** | 1882-11-12 to 2174-11-25 | `hijri_umm_al_qura_from_gregorian()` falls back to reconstruction. `hijri_umm_al_qura_covers()` tells the two apart |
+| **Delta T model** | adequate 1600 to 2200 | Worst case 0.005 deg of lunar longitude, below the 0.0051 deg the lunar series itself carries, so this is never the binding constraint |
+
+Use the header freely from 1600 to 2200. Treat 1882 to 2174 as the range where Umm al-Qura is a published table rather than a reconstruction.
+
+### The real limit is the margin, not the date
+
+Every criterion here thresholds a continuous quantity, so an evening whose value sits inside the error bar of its threshold has an answer the library cannot stand behind. Counting evenings at Mecca under MABIMS 2021 where a term sits within 0.0070 deg of its threshold, which is the worst topocentric elongation error measured against JPL DE440, the answer is between 4 and 10 per century, and it is flat: the 1600s and the 2300s both show 4.
+
+There is no sign of the calculation degrading with distance from J2000. What degrades outside 1900 to 2100 is confidence in the error bar itself, because it stops being measured. Expect a handful of evenings per century where the verdict is a coin toss the arithmetic cannot settle, at any epoch including the present one.
+
+### Latitude: nothing breaks, things stop existing
+
+Ten years of evenings, 2020 to 2029, longitude 0, MABIMS 2021, counting what a caller actually gets back:
+
+| Latitude | Verdict | No sunset | No moonset |
+| --- | --- | --- | --- |
+| 0 | 96.58% | 0.00% | 3.42% |
+| 40 | 96.69% | 0.00% | 3.31% |
+| 60 | 96.82% | 0.00% | 3.18% |
+| 63 | 88.20% | 0.00% | 11.80% |
+| 66 | 67.12% | 4.76% | 28.11% |
+| 70 | 34.08% | 33.97% | 31.95% |
+| 80 | 6.71% | 71.20% | 22.09% |
+| 89 | 0.05% | 97.24% | 2.71% |
+
+Flat to 60, then the verdict rate collapses. Nothing is wrong in that collapse. Above the polar circles the Sun genuinely does not set for part of the year, and a criterion thresholding the Moon's altitude at sunset has nothing to threshold. The statuses say so.
+
+The accuracy margin does not vary with latitude at all: between 0 and 2 evenings per 3653 sit inside the error bar, at every latitude from 0 to 89, with no trend. The geographic limit is availability, not accuracy.
+
+:::note The 3.4% at the equator is not a latitude effect
+
+It is the Moon's own period. `hijri_find_moonset()` scans 24 hours from sunset and the Moon sets once per 24h 50m, so roughly one evening in thirty holds no moonset anywhere on Earth, Jakarta and Mecca included. That comes back as `HIJRI_EVENT_NOT_FOUND`, which is a normal result rather than a reserved one.
+:::
+
+So: use the header freely to latitude 60, where better than 96 percent of evenings yield a verdict and the rest are the Moon's period rather than anything geographic. Between 60 and the polar circles expect a growing share of evenings with no answer. Above them expect most evenings to have none, check the status before the value, and decide at the application level what a calendar does when its criterion cannot be evaluated. That last question is open, and it is the same one [libmuslim#51](https://github.com/muslimtify-org/libmuslim/issues/51) asks for prayer times.
+
+### Longitude and elevation
+
+Longitude is safe, and it is worth knowing why it is only almost safe. This header carries no time zone database and derives local midnight from longitude as mean solar time, so "the evening of date D" is the solar-day evening rather than the civil-day one. Measured over every evening of 2025 at the five zones furthest from their solar meridian, Kashgar, Adak, Vigo, Urumqi and Anchorage, with gaps up to 2.93 hours, zero evenings land on another civil day. Sunset sits far enough from midnight that a three hour offset never crosses a date boundary. If you need civil-day semantics, resolve the offset yourself and use the JD-based entry points.
+
+`loc->elevation_m` is carried but very nearly inert. It does not lower the sunset target and does not correct parallax. Both omissions are deliberate and both were measured: each correction made agreement with published calendars worse.
+
 ## Adding it to your project
 
 Header-only, so there is nothing to build or link beyond the system math

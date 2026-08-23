@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # API reference
 
-Complete reference for the public interface of `libmuslim_dart`. Every symbol below is exported from `package:libmuslim_dart/prayertimes.dart`.
+Complete reference for the public interface of `libmuslim`. Every symbol below is exported from `package:libmuslim/prayertimes.dart`.
 
 Nothing else is public. The generated FFI bindings live under `lib/src/` and are deliberately not exported, see [the overview](./overview#the-ffi-layer-is-not-public).
 
