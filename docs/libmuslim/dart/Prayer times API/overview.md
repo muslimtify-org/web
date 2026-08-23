@@ -5,38 +5,54 @@ sidebar_position: 1
 
 # libmuslim Dart binding
 
-**libmuslim_dart** is the official Dart and Flutter binding for libmuslim. It wraps the C headers in an idiomatic Dart API: times come back as `DateTime` instants, invalid input throws `ArgumentError`, and no `dart:ffi` import or manual memory management is required of the caller.
+**libmuslim** is the official Dart and Flutter binding for libmuslim. It wraps the C headers in an idiomatic Dart API: times come back as `DateTime` instants, invalid input throws `ArgumentError`, and no `dart:ffi` import or manual memory management is required of the caller.
 
 The C sources are vendored into the package and compiled by a build hook, so there is no system libmuslim to install and nothing to link by hand. Adding the dependency is the whole installation.
 
+## Package name
+
+The pub.dev package is `libmuslim`, and so is the import prefix. The GitHub repository is `libmuslim-dart`, which is the only place the longer name appears.
+
 ## Installing
 
-The package is not yet published on pub.dev. Depend on it by Git:
+```bash
+dart pub add libmuslim
+```
+
+```bash
+flutter pub add libmuslim
+```
+
+Either command adds the dependency:
 
 ```yaml title="pubspec.yaml"
 dependencies:
-  libmuslim_dart:
-    git:
-      url: https://github.com/muslimtify-org/libmuslim-dart.git
+  libmuslim: ^0.1.0
 ```
 
 ```dart
-import 'package:libmuslim_dart/prayertimes.dart';
+import 'package:libmuslim/prayertimes.dart';
 ```
 
-The minimum Dart SDK is **3.12**, and a C toolchain must be available at build time because the vendored C sources are compiled as part of your build. Flutter 3.44 stable or newer is recommended for Flutter apps.
+The minimum Dart SDK is **3.12.2**, and a C toolchain must be available at build time because the vendored C sources are compiled as part of your build. There is no separate initialisation step.
+
+On Flutter 3.44 and newer, native assets are enabled by default. On an older Flutter, turn them on once:
+
+```bash
+flutter config --enable-native-assets
+```
 
 ## Libraries
 
 | Import | Wraps | Purpose |
 | --- | --- | --- |
-| `package:libmuslim_dart/prayertimes.dart` | `prayertimes.h` | Pure astronomy. Turns a date, location and explicit UTC offset into prayer times. |
-| `package:libmuslim_dart/libmuslim_dart.dart` | everything | Convenience barrel that re-exports every module. |
+| `package:libmuslim/prayertimes.dart` | `prayertimes.h` | Pure astronomy. Turns a date, location and explicit UTC offset into prayer times. |
+| `package:libmuslim/libmuslim.dart` | everything | Convenience barrel that re-exports every module. |
 
 Importing the specific module is preferred: it keeps the import list honest about what a file actually uses, and it is what will keep working unchanged as more modules land.
 
 :::note
-Unlike the Rust binding, libmuslim_dart does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling, so you supply the UTC offset yourself. See [Time zones](#time-zones) below.
+Unlike the Rust binding, libmuslim does **not** currently wrap `timezone.h`. There is no IANA zone lookup and no daylight saving handling, so you supply the UTC offset yourself. See [Time zones](#time-zones) below.
 :::
 
 ## What the binding adds over the C API
@@ -51,11 +67,13 @@ The binding is deliberately thin. It exposes what `prayertimes.h` exposes and no
 
 **The null-pointer crash is unreachable.** `calculate_prayer_times()` in C dereferences its `params` pointer unconditionally, so passing null segfaults the process with no Dart stack trace. Callers of this binding never supply a pointer, so the crash cannot be reached.
 
+**The high-latitude rule is a named enum, not an integer.** Each method carries its authority's own substitution rule, which is what you get by default. Overriding it means naming a member of `HighLatitudeRule` rather than writing the C enum's integer into a struct field.
+
 **The shared method table is never mutated.** `method_params_get()` returns a pointer into C static storage shared by the whole process. When you override a method's Asr school or ihtiyat, the binding copies the entry into a fresh allocation, applies your change there, and frees it, so the table other callers read is left untouched.
 
 ## The FFI layer is not public
 
-The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim_dart/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
+The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
 
 This is deliberate. Those names, their struct layouts and their failure modes all come from C and change whenever the vendored header changes, so treating them as public API would make every regeneration a breaking change.
 
@@ -69,14 +87,31 @@ Resolving an IANA zone name to an offset is the job of `timezone.h`, which this 
 
 ## Platform support
 
-The package builds and is tested on Linux x86-64. Android, iOS, macOS and Windows are the intended targets and the build hook handles them, but the struct layout is currently verified against the compiled C on x86-64 Linux only.
+| Platform | Supported | Needs |
+| --- | --- | --- |
+| Android | yes | nothing extra, the NDK ships with the platform SDK |
+| iOS | yes | nothing extra, Xcode ships with the platform SDK |
+| Linux | yes | clang or gcc on the host |
+| macOS | yes | Xcode command line tools |
+| Windows | yes | MSVC |
+| Web | no | there is no C runtime to compile into |
+
+`hook/build.dart` compiles the C sources per target, so the list follows what `native_toolchain_c` can drive rather than a set of binaries shipped in the package.
+
+One caveat worth stating plainly: Linux x64 is the only target the test suite has actually been run on. The other four are supported by the build hook rather than verified on hardware.
+
+## Vendored header
+
+The package vendors `prayertimes.h` `v0.2.3`, from libmuslim release [2026.08.22](https://github.com/muslimtify-org/libmuslim/releases/tag/2026.08.22). Its ABI is pinned by a test that reads the compiled C's own `sizeof` and constants, so a changed struct layout fails the tests rather than diverging silently.
 
 ## License
 
-libmuslim_dart is released under the MIT License, the same as libmuslim itself.
+libmuslim is released under the MIT License, the same as libmuslim itself.
 
 Continue to the [Quick start](./quick-start) for a complete working program, or jump to the [API reference](./api-reference) for every type and member.
 
 ## Links
 
+- [Package on pub.dev](https://pub.dev/packages/libmuslim)
+- [API documentation on pub.dev](https://pub.dev/documentation/libmuslim/latest/)
 - [Source repository](https://github.com/muslimtify-org/libmuslim-dart)

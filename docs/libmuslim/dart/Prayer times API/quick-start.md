@@ -9,15 +9,13 @@ This example calculates the prayer times for Jakarta on 12 July 2026 using the K
 
 ## Add the dependency
 
-```yaml title="pubspec.yaml"
-dependencies:
-  libmuslim_dart:
-    git:
-      url: https://github.com/muslimtify-org/libmuslim-dart.git
+```bash
+dart pub add libmuslim
 ```
 
-```bash
-dart pub get
+```yaml title="pubspec.yaml"
+dependencies:
+  libmuslim: ^0.1.0
 ```
 
 A C toolchain must be available at build time, because the package compiles the vendored libmuslim sources itself. Nothing else is installed and nothing is linked by hand.
@@ -25,7 +23,7 @@ A C toolchain must be available at build time, because the package compiles the 
 ## The program
 
 ```dart title="bin/main.dart"
-import 'package:libmuslim_dart/prayertimes.dart';
+import 'package:libmuslim/prayertimes.dart';
 
 /// Jakarta's offset. Every time comes back in UTC, so rendering it for a
 /// reader means adding the offset of the place it describes, not the
@@ -66,7 +64,7 @@ Fajr     04:44
 Dhuhr    12:01
 Asr      15:23
 Maghrib  17:54
-Isha     19:08
+Isha     19:09
 ```
 
 :::note
@@ -131,6 +129,20 @@ final custom = CalculationParameters.custom(
 );
 ```
 
+## High latitudes
+
+At high latitude the sun may never reach the depression angle a method asks for, so Fajr and Isha have no true solution. Each method carries its authority's own substitution rule, and that is what applies by default. Override it only when serving a location the chosen authority is silent about, which keeps the choice in your code rather than misattributing it to that authority:
+
+```dart
+const northern = CalculationParameters.of(
+  CalculationMethod.mwl,
+  highLatitudeRule: HighLatitudeRule.oneSeventh,
+  highLatitudeReferenceLatitude: 45,
+);
+```
+
+`HighLatitudeRule.none` disables substitution entirely, which makes the impossible case observable rather than silently approximated.
+
 ## Handling errors
 
 Bad arguments throw `ArgumentError` at the call, before any calculation runs:
@@ -171,7 +183,7 @@ try {
 
 Whether this throws at all depends on the calculation method, which changed in `prayertimes.h` `v0.2.0`. The high-latitude rule is now a property of the method rather than a global fallback. MWL and Moonsighting carry a reference latitude for the polar case, so under the default MWL parameters this same call **succeeds** and returns a Fajr of `00:24`. Kemenag publishes no such rule and so carries no reference latitude, which is why the example names it explicitly.
 
-Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses only Maghrib, because the sun does not rise. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
+Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses Asr and Maghrib, because the sun does not rise: there is no sunset to measure Maghrib from and nothing casts a shadow. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
 
 Catch `ArgumentError` and `PrayerTimesUnavailable` separately, because the first means your input was wrong, the second means the input was fine and the sky did not cooperate.
 

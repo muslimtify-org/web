@@ -5,7 +5,7 @@ sidebar_position: 3
 
 # API reference
 
-Complete reference for the public interface of `libmuslim_dart`. Every symbol below is exported from `package:libmuslim_dart/prayertimes.dart`.
+Complete reference for the public interface of `libmuslim`. Every symbol below is exported from `package:libmuslim/prayertimes.dart`.
 
 Nothing else is public. The generated FFI bindings live under `lib/src/` and are deliberately not exported, see [the overview](./overview#the-ffi-layer-is-not-public).
 
@@ -149,33 +149,35 @@ The C `CALC_CUSTOM` and `CALC_COUNT` have no member here. `COUNT` is a sentinel 
 
 ### Built-in presets
 
-Angles in degrees, intervals and ihtiyat in minutes. Every preset uses the standard Asr rule.
+Angles in degrees, intervals and ihtiyat in minutes, reference latitude in degrees. Every preset uses the standard Asr rule.
 
-| Method | Fajr | Isha | Isha interval | Maghrib interval | Ihtiyat |
-| --- | --- | --- | --- | --- | --- |
-| `mwl` | 18 | 17 | 0 | 0 | 0 |
-| `makkah` | 18.5 | 0 | 90 | 0 | 0 |
-| `isna` | 15 | 15 | 0 | 0 | 0 |
-| `egypt` | 19.5 | 17.5 | 0 | 0 | 0 |
-| `karachi` | 18 | 18 | 0 | 0 | 0 |
-| `turkey` | 18 | 17 | 0 | 0 | 0 |
-| `singapore` | 20 | 18 | 0 | 0 | 0 |
-| `jakim` | 20 | 18 | 0 | 0 | 0 |
-| `kemenag` | 20 | 18 | 0 | 0 | 2 |
-| `france` | 12 | 12 | 0 | 0 | 0 |
-| `russia` | 16 | 15 | 0 | 0 | 0 |
-| `dubai` | 18.2 | 18.2 | 0 | 0 | 0 |
-| `qatar` | 18 | 0 | 90 | 0 | 0 |
-| `kuwait` | 18 | 17.5 | 0 | 0 | 0 |
-| `jordan` | 18 | 18 | 0 | 0 | 5 |
-| `gulf` | 19.5 | 0 | 90 | 0 | 0 |
-| `tunisia` | 18 | 18 | 0 | 0 | 0 |
-| `algeria` | 18 | 17 | 0 | 0 | 0 |
-| `morocco` | 19 | 17 | 0 | 0 | 0 |
-| `portugal` | 18 | 0 | 77 | 3 | 0 |
-| `moonsighting` | 18 | 18 | 0 | 3 | 0 |
+| Method | Fajr | Isha | Isha interval | Maghrib interval | Ihtiyat | High latitude | Reference latitude |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `mwl` | 18 | 17 | 0 | 0 | 0 | `angleBased` | 45 |
+| `makkah` | 18.5 | 0 | 90 | 0 | 0 | `angleBased` | 0 |
+| `isna` | 15 | 15 | 0 | 0 | 0 | `angleBased` | 0 |
+| `egypt` | 19.5 | 17.5 | 0 | 0 | 0 | `angleBased` | 0 |
+| `karachi` | 18 | 18 | 0 | 0 | 0 | `angleBased` | 0 |
+| `turkey` | 18 | 17 | 0 | 0 | 0 | `angleBased` | 0 |
+| `singapore` | 20 | 18 | 0 | 0 | 0 | `angleBased` | 0 |
+| `jakim` | 20 | 18 | 0 | 0 | 0 | `angleBased` | 0 |
+| `kemenag` | 20 | 18 | 0 | 0 | 2 | `angleBased` | 0 |
+| `france` | 12 | 12 | 0 | 0 | 0 | `angleBased` | 0 |
+| `russia` | 16 | 15 | 0 | 0 | 0 | `angleBased` | 0 |
+| `dubai` | 18.2 | 18.2 | 0 | 0 | 0 | `angleBased` | 0 |
+| `qatar` | 18 | 0 | 90 | 0 | 0 | `angleBased` | 0 |
+| `kuwait` | 18 | 17.5 | 0 | 0 | 0 | `angleBased` | 0 |
+| `jordan` | 18 | 18 | 0 | 0 | 5 | `angleBased` | 0 |
+| `gulf` | 19.5 | 0 | 90 | 0 | 0 | `angleBased` | 0 |
+| `tunisia` | 18 | 18 | 0 | 0 | 0 | `angleBased` | 0 |
+| `algeria` | 18 | 17 | 0 | 0 | 0 | `angleBased` | 0 |
+| `morocco` | 19 | 17 | 0 | 0 | 0 | `angleBased` | 0 |
+| `portugal` | 18 | 0 | 77 | 3 | 0 | `angleBased` | 0 |
+| `moonsighting` | 18 | 18 | 0 | 3 | 0 | `oneSeventh` | 60 |
 
 An Isha angle of 0 paired with a non-zero interval means that method defines Isha as a fixed number of minutes after Maghrib rather than by a solar angle.
+
+A reference latitude of 0 means the authority publishes no rule for the polar case, so there is nowhere to solve the day at and the polar case has no answer under that method. Only MWL and Moonsighting carry one: MWL's 45 degrees is the Fiqh Council's proposal, and Moonsighting's 60 is where moonsighting.com stops calculating and slides down to. Supply your own with `highLatitudeReferenceLatitude` when you need one of the other 19 methods above the circle.
 
 ## `AsrSchool`
 
@@ -183,7 +185,27 @@ An Isha angle of 0 paired with a non-zero interval means that method defines Ish
 enum AsrSchool { standard, hanafi }
 ```
 
-The juristic shadow-length rule for Asr: `standard` is one shadow length, `hanafi` is two. Hanafi always places Asr later.
+The juristic shadow-length rule for Asr: `standard` is one shadow length, `hanafi` is two. Hanafi always places Asr later. Every method in the C table uses `standard` unless a caller overrides it.
+
+## `HighLatitudeRule`
+
+```dart
+enum HighLatitudeRule { none, middleOfNight, oneSeventh, angleBased, nearestLatitude }
+```
+
+What to do where the sun never reaches the depression angle Fajr or Isha is defined by, so the event has no true solution.
+
+| Member | Substitution |
+| --- | --- |
+| `none` | None. The affected times are unavailable |
+| `middleOfNight` | Half the night before sunrise, and after sunset |
+| `oneSeventh` | One seventh of the night |
+| `angleBased` | The twilight angle divided by 60, as a fraction of the night |
+| `nearestLatitude` | The same fraction of the night as at the reference latitude |
+
+Every rule except `none` measures a fraction of the night, so all of them need a night to measure. Inside the polar circle there is neither sunrise nor sunset, and the whole day is instead solved at `highLatitudeReferenceLatitude`. A method that carries no reference latitude has nothing to fall back on there, which is why the polar case still throws under most methods.
+
+`none` is the useful one for finding out whether a location genuinely has an answer: it makes the impossible case observable as a [`PrayerTimesUnavailable`](#prayertimesunavailable) instead of an approximation you cannot distinguish from a real time.
 
 ## `CalculationParameters`
 
@@ -196,12 +218,23 @@ const CalculationParameters.of(
   CalculationMethod method, {
   AsrSchool? asrSchool,
   int? ihtiyat,
+  HighLatitudeRule? highLatitudeRule,
+  double? highLatitudeReferenceLatitude,
 })
 ```
 
-A published method, optionally with the two adjustments practitioners vary. Leaving both overrides null passes the C library's own table entry through untouched and allocates nothing.
+A published method, optionally with the adjustments practitioners vary. Leaving every override null passes the C library's own table entry through untouched and allocates nothing.
 
-Being `const`, it is usable as a default argument, which is how `PrayerTimes.forDate` defaults to `CalculationMethod.mwl`. A `const` constructor cannot throw, so a negative `ihtiyat` is rejected where the value is consumed, at the `PrayerTimes` call, rather than at construction. It is still an `ArgumentError`.
+Being `const`, it is usable as a default argument, which is how `PrayerTimes.forDate` defaults to `CalculationMethod.mwl`. A `const` constructor cannot throw, so a negative `ihtiyat` or an out-of-range `highLatitudeReferenceLatitude` is rejected where the value is consumed, at the `PrayerTimes` call, rather than at construction. It is still an `ArgumentError`.
+
+| Parameter | Meaning |
+| --- | --- |
+| `asrSchool` | Juristic rule for Asr, overriding the method's own |
+| `ihtiyat` | Precautionary minutes added to each time |
+| `highLatitudeRule` | Substitution used where the sun never reaches the required angle |
+| `highLatitudeReferenceLatitude` | Latitude the schedule is solved at inside the polar circle, in degrees |
+
+Override the high-latitude pair only when serving a location the chosen authority is silent about. A method's own rule is the authority's, and replacing it and then calling the result by the method's name misattributes your choice to them.
 
 ### `CalculationParameters.custom`
 
@@ -213,6 +246,8 @@ CalculationParameters.custom({
   int maghribInterval = 0,
   AsrSchool asrSchool = AsrSchool.standard,
   int ihtiyat = 0,
+  HighLatitudeRule highLatitudeRule = HighLatitudeRule.angleBased,
+  double highLatitudeReferenceLatitude = 0.0,
 })
 ```
 
@@ -221,6 +256,8 @@ A method built from scratch. It is not `const`, and it validates eagerly, throwi
 - neither or both of `ishaAngle` and `ishaInterval`
 - `fajrAngle` or `ishaAngle` non-finite or outside 0 to 90 degrees
 - a negative `ishaInterval`, `maghribInterval` or `ihtiyat`
+
+`highLatitudeReferenceLatitude` is the one argument this constructor does not check, neither here nor at the `PrayerTimes` call. An out-of-range value reaches C as written. `CalculationParameters.of` does check it.
 
 :::caution
 **Exactly one** of `ishaAngle` and `ishaInterval` must be given. In C, an `isha_angle` of zero silently means "use the interval instead", so a caller passing a literal zero angle would switch modes without noticing. Requiring exactly one makes the choice explicit and the mistake impossible.
@@ -234,6 +271,8 @@ A method built from scratch. It is not `const`, and it validates eagerly, throwi
 | `maghribInterval` | Fixed minutes after sunset |
 | `asrSchool` | Juristic rule for Asr |
 | `ihtiyat` | Precautionary minutes added to each time |
+| `highLatitudeRule` | Substitution used where the sun never reaches the required angle |
+| `highLatitudeReferenceLatitude` | Latitude the schedule is solved at inside the polar circle, in degrees |
 
 ## `PrayerTimesUnavailable`
 
@@ -248,11 +287,11 @@ final class PrayerTimesUnavailable implements Exception {
 
 Thrown when the C library cannot produce a finite time for one or more prayers. The overwhelmingly common cause is a high latitude where the sun never reaches the depression angle the method requires.
 
-`prayers` lists exactly which ones failed, and which they are depends on the season **and on the method**. Since `v0.2.0` the high-latitude rule belongs to the calculation method, so MWL and Moonsighting carry a reference latitude for the polar case while the other 20 methods do not.
+`prayers` lists exactly which ones failed, and which they are depends on the season **and on the method**. Since `v0.2.0` the high-latitude rule belongs to the calculation method, so MWL and Moonsighting carry a reference latitude for the polar case while the other 20 methods do not. A caller serving a location the chosen authority is silent about can supply one with [`highLatitudeReferenceLatitude`](#calculationparametersof).
 
 Carrying one is not the same as always resolving. Since `v0.2.1` no method reports asr where the Sun casts no shadow, and at Longyearbyen there is a narrow band of four days a year where the Sun is visible only by refraction: sunrise exists and fajr, maghrib and isha all resolve, but nothing casts a shadow. On those days `prayers` is `[Prayer.asr]` even under MWL.
 
-Under Kemenag at 69.6°N, midsummer loses Fajr, Maghrib and Isha, while midwinter loses only Maghrib. Under the default MWL parameters neither date throws at all. Read the list rather than assuming.
+Under Kemenag at 69.6°N, midsummer loses Fajr, Maghrib and Isha, while midwinter loses Asr and Maghrib: the sun does not rise, so there is no sunset to measure Maghrib from and nothing casts a shadow. Under the default MWL parameters neither date throws at all. Read the list rather than assuming.
 
 `toString()` names the affected prayers, the date and the coordinates:
 
@@ -270,6 +309,7 @@ PrayerTimesUnavailable: no fajr, maghrib, isha on 2026-06-21 at latitude 69.6496
 | Neither or both of `ishaAngle` and `ishaInterval` | `ArgumentError` |
 | An angle outside 0 to 90 degrees, or non-finite | `ArgumentError` |
 | A negative interval or ihtiyat | `ArgumentError` |
+| `highLatitudeReferenceLatitude` outside 0 to 90, on `CalculationParameters.of` | `ArgumentError` |
 | A calculated time is not finite | `PrayerTimesUnavailable` |
 
 `ArgumentError` means your input was wrong. `PrayerTimesUnavailable` means the input was fine and the sky has no answer.
@@ -288,7 +328,7 @@ The binding exposes what `prayertimes.h` exposes and adds no calculation feature
 | Passing a null `params` segfaults the process | Unreachable, callers never supply a pointer |
 | A prayer with no solution yields a non-finite `double` | `PrayerTimesUnavailable` |
 | An out-of-range latitude yields `NaN` | `ArgumentError` |
-| `HighLatMethod` is declared in the header | Not exposed. `MethodParams` has no high-latitude field and `calculate_prayer_times()` never reads one, so it would be a lever wired to nothing |
+| `HighLatMethod` is an integer field of `MethodParams` | [`HighLatitudeRule`](#highlatituderule), a named enum, passed to either `CalculationParameters` constructor |
 | `MidnightMode` is a field of `MethodParams` | Not exposed. The header defines a single value and the calculation returns no midnight time |
 | The astronomical constants are `#define`s in the header | Not exposed. They are implementation details of the C algorithm |
 
