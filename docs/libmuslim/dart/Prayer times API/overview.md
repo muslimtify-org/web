@@ -71,12 +71,6 @@ The binding is deliberately thin. It exposes what `prayertimes.h` exposes and no
 
 **The shared method table is never mutated.** `method_params_get()` returns a pointer into C static storage shared by the whole process. When you override a method's Asr school or ihtiyat, the binding copies the entry into a fresh allocation, applies your change there, and frees it, so the table other callers read is left untouched.
 
-## The FFI layer is not public
-
-The generated FFI bindings live under `lib/src/` and are not exported. `calculate_prayer_times`, `MethodParams`, `CalcMethod` and the astronomical constants are unreachable from `package:libmuslim/...`, and the analyzer's `implementation_imports` lint stops another package importing them directly.
-
-This is deliberate. Those names, their struct layouts and their failure modes all come from C and change whenever the vendored header changes, so treating them as public API would make every regeneration a breaking change.
-
 ## Time zones
 
 `utcOffset` is a fixed `Duration`. It is not read from the device, which is what makes the result correct for a location the device is not in.
