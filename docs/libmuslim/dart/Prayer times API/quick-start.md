@@ -9,15 +9,15 @@ This example calculates the prayer times for Jakarta on 12 July 2026 using the K
 
 ## Add the dependency
 
-```yaml title="pubspec.yaml"
-dependencies:
-  libmuslim_dart:
-    git:
-      url: https://github.com/muslimtify-org/libmuslim-dart.git
+```bash
+dart pub add libmuslim
 ```
 
-```bash
-dart pub get
+The pub.dev package is named `libmuslim`, not `libmuslim-dart`. That last string is the repository name. The command above adds this to your pubspec, and you can write it by hand instead:
+
+```yaml title="pubspec.yaml"
+dependencies:
+  libmuslim: ^0.1.0
 ```
 
 A C toolchain must be available at build time, because the package compiles the vendored libmuslim sources itself. Nothing else is installed and nothing is linked by hand.
@@ -25,7 +25,7 @@ A C toolchain must be available at build time, because the package compiles the 
 ## The program
 
 ```dart title="bin/main.dart"
-import 'package:libmuslim_dart/prayertimes.dart';
+import 'package:libmuslim/prayertimes.dart';
 
 /// Jakarta's offset. Every time comes back in UTC, so rendering it for a
 /// reader means adding the offset of the place it describes, not the
@@ -171,7 +171,7 @@ try {
 
 Whether this throws at all depends on the calculation method, which changed in `prayertimes.h` `v0.2.0`. The high-latitude rule is now a property of the method rather than a global fallback. MWL and Moonsighting carry a reference latitude for the polar case, so under the default MWL parameters this same call **succeeds** and returns a Fajr of `00:24`. Kemenag publishes no such rule and so carries no reference latitude, which is why the example names it explicitly.
 
-Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses only Maghrib, because the sun does not rise. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
+Above the Arctic Circle the sun does not set in midsummer, so under Kemenag, Fajr, Maghrib and Isha have no solution on that date. The same location and method on 21 December loses Asr and Maghrib instead, because the sun does not rise: there is no sunset for Maghrib and nothing casts a shadow for Asr, while Fajr and Isha still resolve. Which prayers are affected depends on the date and the method, so read `prayers` rather than assuming.
 
 Catch `ArgumentError` and `PrayerTimesUnavailable` separately, because the first means your input was wrong, the second means the input was fine and the sky did not cooperate.
 

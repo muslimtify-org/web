@@ -164,8 +164,15 @@ typedef enum {
 Always check the status before reading `*result_jd`. On anything other than
 `HIJRI_EVENT_OK` the out-parameter is left untouched, so an unchecked read gives
 you whatever was already in your variable. The circumpolar statuses come from the
-rise and set solvers, `HIJRI_EVENT_NOT_FOUND` from the conjunction finders and
-from non-finite input.
+rise and set solvers, and `HIJRI_EVENT_NOT_FOUND` comes from the conjunction
+finders, from non-finite input, and from `hijri_find_moonset`.
+
+:::caution `HIJRI_EVENT_NOT_FOUND` is a normal moonset result
+
+Since `hijri.h` `v0.1.1` this is not a reserved status. `hijri_find_moonset` scans 24 hours from sunset, and the Moon sets once per 24h 50m, so roughly one evening in thirty holds no moonset at all. That is true at every latitude, Jakarta and Mecca included, and it is not a polar effect: a 24 hour window with no moonset in it is simply not the same thing as a circumpolar Moon.
+
+Until `v0.1.1` both set finders classified a failed search from one extra sample and had to answer with a circumpolar status, which produced 820 false moonset labels over latitude -89 to 89 across 2026. They now report what actually happened. If you switch exhaustively on `HijriEventStatus`, add the `HIJRI_EVENT_NOT_FOUND` arm before upgrading.
+:::
 
 ## Evening parameters
 
