@@ -149,6 +149,14 @@ If you have a GPS receiver and would rather not use a network lookup at all:
 muslimtify location gps on         # probe the receiver and enable it
 ```
 
+To confirm notifications reach your desktop without waiting for the next prayer, send a test one:
+
+```bash
+muslimtify notification test
+```
+
+Prefer a 12-hour clock? Run `muslimtify timeformat 12` (from v0.4.3).
+
 That is it. Muslimtify now runs quietly in the background and notifies you before
 every prayer.
 

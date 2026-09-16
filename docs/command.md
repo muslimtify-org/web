@@ -19,6 +19,10 @@ By default, muslimtify prints a human-readable **table**. Most read-only command
 
 This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10).
 
+Every prayer output carries the date it describes, in all three formats: a `Date` column in the tables, a `date=` line in `--headless`, and a `"date"` field in `--json`. The shapes are shown under each command below.
+
+Clock times follow the saved [time format](#muslimtify-timeformat), `HH:MM` by default or `hh:MM AM` / `hh:MM PM` in 12-hour mode. That applies to `--json` and `--headless` too, so a script that parses the time should allow for both.
+
 Every command accepts `-h` / `--help` for its own usage and examples, e.g. `muslimtify show --help`.
 
 ## `muslimtify show`
@@ -31,6 +35,95 @@ muslimtify show --json       # same data as JSON
 muslimtify show --headless   # same data as key=value
 ```
 
+The table lists every prayer with its date, time, whether notifications are enabled, and its reminders:
+
+```
++------------+------------+----------+----------+-----------------------+
+| Date       | Prayer     | Time     | Status   | Reminders             |
++------------+------------+----------+----------+-----------------------+
+| 2026-09-16 | Fajr       | 04:31    | Enabled  | 30, 15, 5 min before  |
+| 2026-09-16 | Dhuhr      | 11:50    | Enabled  | 30, 15, 5 min before  |
+| 2026-09-16 | Asr        | 15:04    | Enabled  | 30, 15, 5 min before  |
+| 2026-09-16 | Maghrib    | 17:52    | Enabled  | 30, 15, 5 min before  |
+| 2026-09-16 | Isha       | 19:01    | Enabled  | 30, 15, 5 min before  |
++------------+------------+----------+----------+-----------------------+
+```
+
+`--headless` prints a `date=` line, then one `<prayer>=<time>` line for each **enabled** prayer. Disabled prayers are left out.
+
+```
+date=2026-09-16
+fajr=04:31
+dhuhr=11:50
+asr=15:04
+maghrib=17:52
+isha=19:01
+```
+
+`--json` prints a single object with the date and **every** prayer, including disabled ones:
+
+```json
+{
+  "date": "2026-09-16",
+  "prayers": {
+    "fajr": {
+      "time": "04:31",
+      "offset": 0,
+      "enabled": true,
+      "reminders": [30, 15, 5]
+    },
+    "dhuhr": {
+      "time": "11:50",
+      "offset": 0,
+      "enabled": true,
+      "reminders": [30, 15, 5]
+    },
+    "asr": {
+      "time": "15:04",
+      "offset": 0,
+      "enabled": true,
+      "reminders": [30, 15, 5]
+    },
+    "maghrib": {
+      "time": "17:52",
+      "offset": 0,
+      "enabled": true,
+      "reminders": [30, 15, 5]
+    },
+    "isha": {
+      "time": "19:01",
+      "offset": 0,
+      "enabled": true,
+      "reminders": [30, 15, 5]
+    }
+  }
+}
+```
+
+### When a prayer falls on another day
+
+At high latitudes a prayer can fall past midnight, so Isha calculated for 30 April actually happens early on 1 May. Muslimtify reports the day the prayer really falls on rather than silently printing a time that looks earlier than Maghrib:
+
+| Format | How the day shift is shown |
+| --- | --- |
+| Table | The `Date` column carries the real date, e.g. `2026-05-01` on the Isha row |
+| `--headless` | An extra `<prayer>_offset=<days>` line after the prayer, only when it is not `0`, e.g. `isha_offset=1` |
+| `--json` | The `offset` field, always present: `1` for the next day, `-1` for the previous day, `0` otherwise |
+
+> The `offset` in this output is a **day** shift. It is unrelated to the per-prayer minute adjustment set with [`muslimtify offset`](#muslimtify-offset), which is stored as `offset` in `config.json`.
+
+```
+date=2026-04-30
+fajr=02:41
+dhuhr=13:27
+asr=17:40
+maghrib=21:51
+isha=00:01
+isha_offset=1
+```
+
+A prayer the sun never produces on that day, such as Isha during a polar summer, prints as `--:--`.
+
 ## `muslimtify show --next`
 
 Print the **next prayer time** and the remaining time until it starts. For example, if it is currently Dhuhr, it shows Asr and the countdown. After the day's last prayer, it rolls over to tomorrow's Fajr.
@@ -40,6 +133,33 @@ muslimtify show --next             # next prayer as a table
 muslimtify show --next --json      # next prayer as JSON
 muslimtify show --next --headless  # next prayer as key=value
 ```
+
+```
++------------+------------+----------+-----------+
+| Date       | Prayer     | Time     | Remaining |
++------------+------------+----------+-----------+
+| 2026-09-17 | Fajr       | 04:30    | 07:18     |
++------------+------------+----------+-----------+
+```
+
+`date` is the day the prayer actually falls on, so after Isha it is tomorrow's date. `remaining` is a duration in `HH:MM`, hours and minutes until the prayer, and is never shown in 12-hour form.
+
+```
+date=2026-09-17
+fajr=04:30
+remaining=07:18
+```
+
+```json
+{
+  "date": "2026-09-17",
+  "prayer": "fajr",
+  "time": "04:30",
+  "remaining": "07:18"
+}
+```
+
+In `--headless` the prayer name is the key of the second line. Skip `date` and `remaining` to find it.
 
 ## `muslimtify show --date <start> [end]`
 
@@ -58,7 +178,61 @@ Two limits apply to the dates you pass:
 | Year | `1` to `9999` | The date is rejected as malformed |
 | Range span | 366 days (inclusive) | The range is rejected before any output |
 
-The 366-day cap covers a full leap year, which is the longest span with a practical use. Components do not need to be zero-padded, so `2026-7-7` parses the same as `2026-07-07`. Anything else, including a leading sign, extra digits such as `00002026`, or trailing characters, is rejected.
+The 366-day cap covers a full leap year, which is the longest span with a practical use. Components do not need to be zero-padded, so `2026-7-7` parses the same as `2026-07-07`. Anything else, including a leading sign, extra digits such as `00002026`, or trailing characters, is rejected. `--json` and `--headless` may appear before or after the dates.
+
+A single date prints exactly like [`muslimtify show`](#muslimtify-show). A range prints one row per day:
+
+```
++------------------------------------------------------+
+| Date       | Fajr  | Dhuhr | Asr   | Maghrib | Isha  |
++------------------------------------------------------+
+| 2026-09-16 | 04:31 | 11:50 | 15:04 | 17:52   | 19:01 |
+| 2026-09-17 | 04:30 | 11:50 | 15:03 | 17:52   | 19:01 |
++------------------------------------------------------+
+```
+
+Because each row is a single date, a prayer that falls on another day is marked in the cell instead: `00:01+` for the next day and `23:58-` for the previous one. A legend is printed under the table whenever a marker appears.
+
+```
+| 2026-04-30 | 02:41  | 13:27  | 17:40  | 21:51   | 00:01+ |
++----------------------------------------------------------+
+  + falls after midnight, on the next day
+```
+
+In `--headless` a range is a series of blocks, one per day, separated by a blank line, each in the same shape as a single day:
+
+```
+date=2026-09-16
+fajr=04:31
+dhuhr=11:50
+asr=15:04
+maghrib=17:52
+isha=19:01
+
+date=2026-09-17
+fajr=04:30
+dhuhr=11:50
+asr=15:03
+maghrib=17:52
+isha=19:01
+```
+
+In `--json` a range is an array with one element per day, and each element has exactly the shape of the single-day object shown under [`muslimtify show`](#muslimtify-show): a `date` and a `prayers` object holding all five prayers.
+
+## `muslimtify show --day-offset <days>`
+
+Print the prayer times for a day **relative to today**, without working out the date yourself. The offset is a whole number of days and may be negative.
+
+```bash
+muslimtify show --day-offset 1             # tomorrow
+muslimtify show --day-offset -1            # yesterday
+muslimtify show --day-offset 7 --json      # one week from today, as JSON
+muslimtify show --day-offset -365          # one year ago
+```
+
+The output is the same as a single-day [`show --date`](#muslimtify-show---date-start-end), so the `date` field tells you which day was shown. The shifted date must fall in years `1` to `9999`.
+
+`--day-offset` cannot be combined with `--next` or `--date`.
 
 ## `muslimtify location`
 
@@ -192,6 +366,32 @@ muslimtify madzhab hanafi    # Hanafi
 muslimtify madzhab --list    # list madzhab options
 ```
 
+## `muslimtify timeformat`
+
+Show or set the clock format used for every printed time. Available from **v0.4.3**.
+
+```bash
+muslimtify timeformat          # show the current format
+muslimtify timeformat 12       # 12-hour clock, e.g. 05:52 PM
+muslimtify timeformat 24       # 24-hour clock, e.g. 17:52 (default)
+muslimtify timeformat --list   # list both formats, * marks the current one
+```
+
+The setting is saved in `config.json` and applies everywhere a clock time is printed: the tables, `--json`, `--headless`, `show --next`, and the text of desktop notifications. The hour keeps its leading zero in both modes, so `05:52 PM` rather than `5:52 PM`, which keeps table columns aligned.
+
+```
+date=2026-09-16
+fajr=04:31 AM
+dhuhr=11:50 AM
+asr=03:04 PM
+maghrib=05:52 PM
+isha=07:01 PM
+```
+
+Two things are not affected. The `remaining` countdown in `show --next` is a duration, not a time of day, so it stays `HH:MM`. Dates are always `yyyy-mm-dd`.
+
+> If you parse `--json` or `--headless` output in a script, allow for both forms. A 12-hour time contains a space before `AM` or `PM`.
+
 ## `muslimtify notification`
 
 Show or configure the notifications and reminders shown around each prayer.
@@ -210,6 +410,7 @@ Prayer names accepted below are `fajr`, `dhuhr`, `asr`, `maghrib`, and `isha` (o
 muslimtify notification enable fajr    # enable Fajr notifications
 muslimtify notification disable asr    # disable Asr notifications
 muslimtify notification enable all     # enable every prayer
+muslimtify notification disable        # no prayer name also means every prayer
 ```
 
 ### Reminders
@@ -219,8 +420,10 @@ Set one or more reminders that fire a number of minutes **before** the Adhan. Ea
 ```bash
 muslimtify notification --reminder fajr 30 15 5   # reminders for a single prayer
 muslimtify notification --reminder --all 30 15 5  # the same reminders for every prayer
-muslimtify notification --reminder fajr none      # clear Fajr's reminders
+muslimtify notification --reminder fajr none      # clear Fajr's reminders (clear also works)
 ```
+
+With no reminders a prayer still notifies once, when it is time to pray.
 
 ### Urgency
 
@@ -237,8 +440,13 @@ Play (and configure) the Adhan per prayer.
 ```bash
 muslimtify notification --adhan enable maghrib   # play adhan for Maghrib
 muslimtify notification --adhan disable fajr     # stop playing adhan for Fajr
-muslimtify notification --adhan set /path/to/adhan.mp3  # set a custom adhan file
+muslimtify notification --adhan set /path/to/adhan.mp3  # use a custom adhan file for every prayer
+muslimtify notification --adhan stop             # stop an adhan that is playing now
 ```
+
+`--adhan set` applies the file to all five prayers. To use a different file for one prayer, edit its `adhan` key in [`config.json`](./configuration.md#adhan-and-sounds). The path must point to an existing regular file. Symlinks and directories are rejected, and the path is saved in its resolved, absolute form.
+
+`--adhan stop` prints `Adhan playback stopped`, or `No adhan is currently playing` when there is nothing to stop. On Windows the notification also carries a Stop button that does the same.
 
 ### Sound mode
 
@@ -247,6 +455,21 @@ Choose what sound the notification itself plays.
 ```bash
 muslimtify notification --sound adhan    # adhan | default | off
 ```
+
+### Send a test notification
+
+Check that notifications and sound work without waiting for the next prayer. The test uses the real settings for the next upcoming prayer, including its time, urgency and sound.
+
+```bash
+muslimtify notification test           # send the "it's time" notification now
+muslimtify notification test --adhan   # send it with that prayer's adhan
+```
+
+```
+Sent test notification for Maghrib at 17:52
+```
+
+If every prayer is disabled there is nothing to test, and the command exits with `No upcoming prayers enabled.`
 
 ## `muslimtify offset`
 
