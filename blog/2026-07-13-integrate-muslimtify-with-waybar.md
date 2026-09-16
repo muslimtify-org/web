@@ -79,7 +79,7 @@ Now verify Muslimtify is returning data:
 muslimtify show --headless
 ```
 
-You should see five `key=value` prayer lines (fajr, dhuhr, asr, maghrib, isha). Once you do, the Waybar module has something to display.
+You should see a `date=` line followed by one `key=value` line for each enabled prayer (fajr, dhuhr, asr, maghrib, isha). Once you do, the Waybar module has something to display.
 
 ## Step 1: Create the Waybar Script
 
@@ -90,13 +90,15 @@ Create `~/.local/bin/waybar-muslimtify.sh` (or in any location you want):
 ```bash
 #!/bin/bash
 
-# Next prayer: `muslimtify show --next --headless` emits two key=value lines,
-# e.g.  asr=15:22  /  remaining=03:08  (prayer name is lowercase)
+# Next prayer: `muslimtify show --next --headless` emits key=value lines,
+# e.g.  date=2026-09-16  /  asr=15:22  /  remaining=03:08  (prayer name is lowercase)
 name=""
 time=""
 remaining=""
 while IFS='=' read -r key val; do
-    [[ -z "$key" ]] && continue
+    case "$key" in
+        ""|date|*_offset) continue ;;   # not a prayer name
+    esac
     if [[ "$key" == "remaining" ]]; then
         remaining="$val"
     else
@@ -112,7 +114,9 @@ if [[ -n "$name" && -n "$time" && -n "$remaining" ]]; then
     tooltip="󰧧  <b>Prayer Times</b>\n━━━━━━━━━━━━━━━━━━━━━"
 
     while IFS='=' read -r prayer ptime; do
-        [[ -z "$prayer" ]] && continue
+        case "$prayer" in
+            ""|date|*_offset) continue ;;   # skip the date and day-shift lines
+        esac
         icon=""
         case "$prayer" in
             fajr)    icon="󰖜" ;;
@@ -150,7 +154,7 @@ chmod +x ~/.local/bin/waybar-muslimtify.sh
 
 **How the script works:**
 
-- It runs `muslimtify show --next --headless` once and parses the `key=value` lines it emits to get the next prayer's name, time, and remaining countdown.
+- It runs `muslimtify show --next --headless` once and parses the `key=value` lines it emits to get the next prayer's name, time, and remaining countdown. The `date` line, and any `<prayer>_offset` line for a prayer that falls on another day, are skipped because they are not prayer names.
 - For the tooltip, it runs `muslimtify show --headless` to read the full prayer times as `key=value` pairs, then builds a formatted list with a Nerd Font icon for each prayer and marks the next prayer with an arrow.
 - If any data is missing (e.g., Muslimtify isn't configured yet), it falls back to a placeholder `--:--` display.
 - The output is a JSON object that Waybar's `return-type: json` consumes directly.
