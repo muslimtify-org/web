@@ -98,9 +98,31 @@ default madzhab is `shafi`.
 
 You can also define a **custom method** by setting `"method": "custom"` in `config.json` with your own `fajr_angle` and `isha_angle` values.
 
+## Time format
+
+Choose whether times are printed on a 24-hour clock (`17:52`, the default) or a 12-hour clock (`05:52 PM`). Available from **v0.4.3**.
+
+```bash
+muslimtify timeformat 12       # use the 12-hour clock
+muslimtify timeformat 24       # back to the 24-hour clock
+muslimtify timeformat          # show the current setting
+```
+
+The choice applies to every clock time Muslimtify prints, including `--json`, `--headless`, and the text of desktop notifications. It is stored in its own `display` block:
+
+```json
+"display": {
+  "time_format": 24
+}
+```
+
+Only `12` and `24` are valid. Any other value in a hand-edited file is treated as `24` when the config loads.
+
+A config file from an earlier version has no `display` block, and that is fine: it loads with the 24-hour default, so output is exactly what it was before upgrading. The block is written into the file the next time a setting is saved. No migration step is needed.
+
 ## Prayers and offsets
 
-Each of the five prescribed prayers can be enabled or disabled, and given a per-prayer time `offset` (in minutes) to match your local mosque. All five are enabled by default. `sunrise` and `dhuha` were configurable until `prayertimes.h` `v0.2.0` removed them, and a config file that still carries either block keeps loading, but the block has no effect.
+Each of the five prescribed prayers can be enabled or disabled, and given a per-prayer time `offset` (in minutes, `-60` to `60`) to match your local mosque. Set it with [`muslimtify offset`](./command.md#muslimtify-offset) rather than editing the file. All five are enabled by default. `sunrise` and `dhuha` were configurable until `prayertimes.h` `v0.2.0` removed them, and a config file that still carries either block keeps loading, but the block has no effect.
 
 ```json
 "asr": {
@@ -120,7 +142,10 @@ Reminders are the minutes-before-Adhan nudges. Configure them per prayer or for 
 muslimtify notification --reminder --all 30 15 5   # set reminders for every prayer
 muslimtify notification --reminder fajr 30 15 5    # set reminders for a single prayer
 muslimtify notification                            # show current notification settings
+muslimtify notification test                       # send a test notification now
 ```
+
+`notification test` sends the notification for the next upcoming prayer straight away, using its real time, urgency and sound, so you can confirm your setup works without waiting. See [Send a test notification](./command.md#send-a-test-notification).
 
 The `notification` block also controls the toast `timeout`, `urgency`, sounds, and
 icon:
@@ -138,7 +163,16 @@ icon:
 
 ## Adhan and sounds
 
-Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per prayer with `adhan_enabled`, and point `adhan` at a custom sound file to override the default for that prayer. The global `sound`, `sound_alarm`, and `sound_reminder` keys in the `notification` block set the defaults.
+Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per prayer with `adhan_enabled`, and point `adhan` at a custom sound file to override the default for that prayer. An empty `adhan` uses the Adhan bundled with Muslimtify. The global `sound`, `sound_alarm`, and `sound_reminder` keys in the `notification` block set the defaults.
+
+```bash
+muslimtify notification --adhan enable maghrib          # play the adhan for Maghrib
+muslimtify notification --adhan set /path/to/adhan.mp3  # use a custom file for all five prayers
+muslimtify notification --adhan stop                    # stop an adhan that is playing
+muslimtify notification test --adhan                    # hear it without waiting for a prayer
+```
+
+`--adhan set` writes the same file into every prayer's `adhan` key. For a different file per prayer, edit those keys in `config.json` directly.
 
 ## Full default config.json
 
@@ -177,6 +211,9 @@ Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per p
   "calculation": {
     "method": "kemenag",
     "madhab": "shafi"
+  },
+  "display": {
+    "time_format": 24
   }
 }
 ```
