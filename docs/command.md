@@ -17,7 +17,7 @@ By default, muslimtify prints a human-readable **table**. Most read-only command
 | `--json` | Structured JSON |
 | `--headless` | Plain `key=value` pairs |
 
-This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10).
+This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10). On Omarchy, the [Omarchy plugin](./omarchy-plugin.md) does this for you.
 
 Every prayer output carries the date it describes, in all three formats: a `Date` column in the tables, a `date=` line in `--headless`, and a `"date"` field in `--json`. The shapes are shown under each command below.
 
