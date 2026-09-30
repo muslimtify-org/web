@@ -63,7 +63,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/muslimtify.png',
     // Injected into every page's <head>. Algolia's crawler reads this tag to
     // verify domain ownership for the DocSearch program.
     metadata: [
@@ -77,7 +77,7 @@ const config: Config = {
       title: 'Muslimtify',
       logo: {
         alt: 'Muslimtify Logo',
-        src: 'img/muslimtify.png',
+        src: 'img/muslimtify-navbar.png',
       },
       items: [
         {
