@@ -16,7 +16,7 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://muslimtify.vercel.app',
+  url: 'https://www.muslimtify.org',
   // Set the /<baseUrl>/ pathname under which your site is served
   baseUrl: '/',
 
@@ -33,6 +33,8 @@ const config: Config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
+
+  plugins: ['vercel-analytics'],
 
   presets: [
     [
