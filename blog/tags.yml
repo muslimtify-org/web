@@ -18,3 +18,8 @@ muslimtify:
   label: Muslimtify 
   permalink: /muslimtify
   description: All posts about muslimtify
+
+introduction:
+  label: Introduction
+  permalink: /introduction
+  description: Introducing muslimtify, the features and any integration
