@@ -6,6 +6,8 @@ authors:
 tags: [muslimtify, introduction]
 ---
 
+<img width="3168" height="1344" alt="github-banner" src="https://github.com/user-attachments/assets/294b241f-7ccc-413f-a788-b00b1fad5310" />
+
 You sit down at your computer after Dhuhr with a full list of things to do. The work pulls you in. Your phone is face down on silent because you wanted to focus. When you finally look up, the sky outside is already turning orange and Asr is almost gone.
 
 Most of us who work or study in front of a screen know this moment. We did not decide to delay the prayer. We lost track of time.
