@@ -104,55 +104,19 @@ const config: Config = {
     footer: {
       style: 'dark',
       links: [
+        {label: 'Docs', to: '/docs/'},
+        {label: 'Blog', to: '/blog'},
+        {label: 'Discord', href: 'https://discord.gg/tpNZBXmKpd'},
         {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Documentation',
-              to: '/docs/',
-            },
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
-          ],
+          label: 'Contribute',
+          href: 'https://github.com/rizukirr/muslimtify/blob/main/CONTRIBUTING.md',
         },
-        {
-          title: 'Community',
-          items: [
-            {
-              label: 'Discord',
-              href: 'https://discord.gg/tpNZBXmKpd',
-            },
-            {
-              label: 'Contribute',
-              href: 'https://github.com/rizukirr/muslimtify/blob/main/CONTRIBUTING.md',
-            },
-            {
-              label: 'Sponsor',
-              href: 'https://github.com/sponsors/rizukirr',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'GitHub',
-              href: 'https://github.com/rizukirr/muslimtify',
-            },
-            {
-              label: 'Issues',
-              href: 'https://github.com/rizukirr/muslimtify/issues',
-            },
-            {
-              label: 'libmuslim',
-              href: 'https://github.com/rizukirr/libmuslim',
-            },
-          ],
-        },
+        {label: 'Sponsor', href: 'https://github.com/sponsors/rizukirr'},
+        {label: 'GitHub', href: 'https://github.com/rizukirr/muslimtify'},
+        {label: 'Issues', href: 'https://github.com/rizukirr/muslimtify/issues'},
+        {label: 'libmuslim', href: 'https://github.com/rizukirr/libmuslim'},
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Muslimtify · MIT License`,
+      copyright: `Copyright © ${new Date().getFullYear()} Muslimtify. MIT License.`,
     },
     prism: {
       theme: prismThemes.github,
