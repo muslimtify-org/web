@@ -23,3 +23,8 @@ introduction:
   label: Introduction
   permalink: /introduction
   description: Introducing muslimtify, the features and any integration
+
+prayer-time-calculation:
+  label: Prayer time calculation
+  permalink: /prayer-time-calculation
+  description: A series on how prayer times are defined in the sources and computed in code
