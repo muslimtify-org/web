@@ -132,6 +132,16 @@ This happens when `config.json` holds a latitude outside `-90` to `90`, a longit
 
 **The prayer does not occur that day.** At high latitudes the sun can fail to reach the position a prayer is defined by for part of the year, so some prayers, most often Fajr and Isha, have no time at all on those days. Only those prayers show `--:--`, with no warning, and they do not notify.
 
+## My old script says `--format json` was removed
+
+The command line was redesigned before v0.4. The old flags and subcommands now print their replacement and exit with an error instead of running:
+
+```
+Error: '--format json' was removed; use '--json'
+```
+
+The full list is under [Commands removed in earlier versions](./command.md#commands-removed-in-earlier-versions).
+
 ## My script or status bar shows extra lines after upgrading
 
 Since **v0.4.2** every prayer output carries its date. `show --headless` and `show --next --headless` begin with a `date=` line, a prayer that falls on another day adds a `<prayer>_offset=` line, and `show --json` wraps the prayers as `{"date": ..., "prayers": {...}}`. A script that treats every `key=value` line as a prayer will show `date` as an extra row.
@@ -172,7 +182,7 @@ To make the automatic re-check more frequent, lower the interval (the minimum is
 muslimtify location set --refresh-interval=3600
 ```
 
-If your location never updates on its own, check `muslimtify location`: a `refresh_interval` of `disabled` turns automatic re-checks off, and coordinates set manually with `--lat` / `--long` are never re-checked at all. See [Location auto-refresh](./configuration.md#location-auto-refresh).
+If your location never updates on its own, check `muslimtify location`: a `refresh_interval` of `disabled` turns automatic re-checks off, and coordinates set manually with `--lat` / `--long` are never re-checked at all. A re-check that fails, for example with no network, is retried ten minutes later. See [Location auto-refresh](./configuration.md#location-auto-refresh).
 
 ## The daemon is not running
 
@@ -188,7 +198,8 @@ muslimtify daemon status
 muslimtify daemon install
 ```
 
-- On Linux, the daemon runs under systemd. Confirm your session has an active user systemd instance if the service refuses to start.
+- On Linux, the daemon is a systemd user service. Confirm your session has an active user systemd instance if the service refuses to start, and look for the unit at `$XDG_CONFIG_HOME/systemd/user/muslimtify.service` (`~/.config/systemd/user/` by default).
+- On Windows, the daemon is a Task Scheduler task named `muslimtify` that runs every minute in your interactive session. If `daemon status` says it is missing, run `daemon install` again.
 
 ## Resetting your configuration
 
@@ -201,6 +212,6 @@ Delete `config.json` to return to defaults. Muslimtify recreates it with built-i
 
 ## Still stuck?
 
-- Open an issue: [GitHub Issues](https://github.com/rizukirr/muslimtify/issues)
-- Ask the community: [GitHub Discussions](https://github.com/rizukirr/muslimtify/discussions)
+- Open an issue: [GitHub Issues](https://github.com/muslimtify-org/muslimtify/issues)
+- Ask the community: [GitHub Discussions](https://github.com/muslimtify-org/muslimtify/discussions)
 - Join the [Discord server](https://discord.gg/tpNZBXmKpd)
