@@ -12,7 +12,7 @@ All prayer time calculations run **locally** on your machine, with no accounts a
 
 ## Installation
 
-Every release ships ready-to-run binaries for Linux and Windows on the [releases page](https://github.com/rizukirr/muslimtify/releases/latest). Pick the
+Every release ships ready-to-run binaries for Linux and Windows on the [releases page](https://github.com/muslimtify-org/muslimtify/releases/latest). Pick the
 option that matches your system.
 
 ### Arch Linux (AUR)
@@ -52,7 +52,7 @@ sudo dnf install libnotify libcurl
 # Arch
 sudo pacman -S libnotify curl
 
-# download from https://github.com/rizukirr/muslimtify/releases/latest
+# download from https://github.com/muslimtify-org/muslimtify/releases/latest
 tar xzf muslimtify-<version>-linux-<arch>.tar.gz
 sudo cp -r muslimtify-<version>-linux-<arch>/{bin,lib,share} /usr/local/
 muslimtify daemon install
@@ -66,7 +66,7 @@ sha256sum -c SHA256SUMS
 
 ### Prebuilt installer (Windows)
 
-[Download](https://github.com/rizukirr/muslimtify/releases/latest) and run the installer that matches your architecture:
+[Download](https://github.com/muslimtify-org/muslimtify/releases/latest) and run the installer that matches your architecture:
 
 ```powershell
 muslimtify-<version>-setup-x64.exe      # Intel / AMD
@@ -89,7 +89,7 @@ sudo pacman -S git base-devel cmake pkgconfig libnotify curl
 Then clone, install, and register the background service:
 
 ```bash
-git clone https://github.com/rizukirr/muslimtify.git
+git clone https://github.com/muslimtify-org/muslimtify.git
 cd muslimtify
 sudo ./install.sh
 muslimtify daemon install

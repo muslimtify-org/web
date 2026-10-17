@@ -31,6 +31,8 @@ muslimtify location set --refresh-interval=43200     # re-check every 12 hours
 muslimtify location                                  # show current location
 ```
 
+The first time you set a location by hand, pass both `--lat` and `--long`. After that either can be changed alone. Coordinates are stored to six decimal places, about a tenth of a metre, which is far finer than prayer times can resolve.
+
 If the machine is in a different region than the coordinates you set, override the timezone explicitly with `--timezone=<iana>`. The name has to be one the host system can actually resolve. An unknown zone is rejected at the point you set it, instead of being saved and silently treated as UTC.
 
 The stored `timezone_offset` is only a fallback. When a valid IANA `timezone` is present, the offset used to compute prayer times is derived from that name for the date being calculated, so daylight saving and historical zone changes are applied automatically. `muslimtify location` reports the offset in effect today for the same reason.
@@ -59,6 +61,7 @@ Behaviour worth knowing:
 - **A denied permission does not.** On Windows a refused location request leaves `use_gps` set, because granting access in Settings is enough to make the next attempt succeed.
 - **A missing fix is silent.** No warning is printed while a device is present but has not locked on yet.
 - **GPS carries no timezone.** Only latitude and longitude come from the receiver. The timezone is read from the host system, and the country is left untouched, so `method --auto` keeps working from whatever country you already have.
+- **GPS is part of automatic location.** Since **v0.4.4**, `gps on` also sets `auto_detect` to `true`, so coordinates you had entered by hand are replaced at the next refresh. Setting `--lat` / `--long` turns GPS off again, and a hand-edited `config.json` with `use_gps` true and `auto_detect` false is corrected on load.
 
 ## Location auto-refresh
 
@@ -80,7 +83,8 @@ Rules worth knowing:
   `muslimtify location set --auto`.
 - **The minimum is `3600` (1 hour).** Values between `1` and `3599` are rejected, and a hand-edited `config.json` below the floor is raised to `3600` on load. This keeps Muslimtify within the limits of the free `ipinfo.io` endpoint.
 - **Manual locations are never re-checked.** Setting `--lat` / `--long` turns auto-detection off, which disables refreshing regardless of the interval.
-- **A failed refresh is harmless.** If the network is unavailable, Muslimtify keeps your last known coordinates and tries again on a later cycle.
+- **A failed refresh is harmless.** If the network is unavailable, Muslimtify keeps your last known coordinates and tries again ten minutes later, rather than on every one-minute cycle.
+- **A successful refresh takes effect at once.** When the location changes, today's remaining notifications are rebuilt for the new coordinates instead of waiting for midnight.
 
 The `updated_at` key in `config.json` records when the location was last fetched successfully (Unix seconds, `0` means never). Muslimtify maintains it for you.
 
@@ -136,7 +140,7 @@ Each of the five prescribed prayers can be enabled or disabled, and given a per-
 
 ## Notifications and reminders
 
-Reminders are the minutes-before-Adhan nudges. Configure them per prayer or for all prayers at once:
+Reminders are the minutes-before-Adhan nudges, up to 10 per prayer. Configure them per prayer or for all prayers at once:
 
 ```bash
 muslimtify notification --reminder --all 30 15 5   # set reminders for every prayer

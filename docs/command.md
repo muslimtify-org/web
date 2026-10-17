@@ -17,7 +17,7 @@ By default, muslimtify prints a human-readable **table**. Most read-only command
 | `--json` | Structured JSON |
 | `--headless` | Plain `key=value` pairs |
 
-This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/rizukirr/muslimtify/discussions/10). On Omarchy, the [Omarchy plugin](./omarchy-plugin.md) does this for you.
+This flexibility makes it easy to integrate muslimtify into custom Linux widgets, such as [`waybar`](/blog/integrate-muslimtify-with-waybar) or [`yad`](https://github.com/muslimtify-org/muslimtify/discussions/10). On Omarchy, the [Omarchy plugin](./omarchy-plugin.md) does this for you.
 
 Every prayer output carries the date it describes, in all three formats: a `Date` column in the tables, a `date=` line in `--headless`, and a `"date"` field in `--json`. The shapes are shown under each command below.
 
@@ -270,7 +270,9 @@ The `gmt` field shows the offset in effect **today**, so it follows daylight sav
 
 > `--auto` may be combined only with `--city` and/or `--country`. It cannot be mixed with `--lat`, `--long`, or `--timezone`.
 
-> Setting coordinates manually with `--lat` / `--long` turns auto-detection off, so the location is never re-checked. `--refresh-interval` only affects locations detected with `--auto`.
+> The first time a location is set by hand, both `--lat` and `--long` are required. Once a location exists, either one can be changed on its own.
+
+> Setting coordinates manually with `--lat` / `--long` turns auto-detection off, so the location is never re-checked, and it also turns GPS off. `--refresh-interval` only affects locations detected with `--auto`.
 
 > An unknown or unresolvable timezone name is rejected with `Error: Unknown timezone '<name>'` rather than saved. Real zones that sit at UTC+0, such as `Africa/Abidjan`, are accepted normally.
 
@@ -313,6 +315,8 @@ Everything else leaves GPS disabled and reports why:
 | `GPS not available in this build.` | The binary has no GPS client for this platform |
 
 > GPS supplies coordinates only, never a timezone. The timezone is taken from the host system when a GPS fix is used, so set it explicitly with `--timezone` if the machine's clock is in a different region.
+
+> Since **v0.4.4**, `gps on` also turns automatic location on, because GPS is a source for the automatic location rather than a replacement for it. Coordinates you had set by hand are replaced at the next refresh. Setting `--lat` / `--long` again turns GPS off.
 
 > Toggling GPS clears the cached prayer times so the next run recomputes them from the new source.
 
@@ -402,7 +406,7 @@ muslimtify notification --json       # show settings as JSON
 muslimtify notification --headless   # show settings as key=value
 ```
 
-Prayer names accepted below are `fajr`, `dhuhr`, `asr`, `maghrib`, and `isha` (or `all`). `sunrise` and `dhuha` were accepted until `prayertimes.h` `v0.2.0` removed them, since neither is a prescribed prayer.
+Prayer names accepted below are `fajr`, `dhuhr`, `asr`, `maghrib`, and `isha` (or `all`), in any letter case. `dhur` is accepted as an alias of `dhuhr` from **v0.4.4**. `sunrise` and `dhuha` were accepted until `prayertimes.h` `v0.2.0` removed them, since neither is a prescribed prayer.
 
 ### Enable / disable a prayer
 
@@ -415,7 +419,7 @@ muslimtify notification disable        # no prayer name also means every prayer
 
 ### Reminders
 
-Set one or more reminders that fire a number of minutes **before** the Adhan. Each value is minutes (1–1440).
+Set one or more reminders that fire a number of minutes **before** the Adhan. Each value is minutes (1–1440), and a prayer holds at most 10 reminders.
 
 ```bash
 muslimtify notification --reminder fajr 30 15 5   # reminders for a single prayer
@@ -446,7 +450,7 @@ muslimtify notification --adhan stop             # stop an adhan that is playing
 
 `--adhan set` applies the file to all five prayers. To use a different file for one prayer, edit its `adhan` key in [`config.json`](./configuration.md#adhan-and-sounds). The path must point to an existing regular file. Symlinks and directories are rejected, and the path is saved in its resolved, absolute form.
 
-`--adhan stop` prints `Adhan playback stopped`, or `No adhan is currently playing` when there is nothing to stop. On Windows the notification also carries a Stop button that does the same.
+`--adhan stop` prints `Adhan playback stopped`, or `No adhan is currently playing` when there is nothing to stop. On Windows the notification also carries a Stop button that does the same. Since **v0.4.4** stopping the daemon itself, with `daemon uninstall` or a system shutdown, also cuts an adhan that is playing instead of letting it run to the end.
 
 ### Sound mode
 
@@ -491,7 +495,14 @@ muslimtify daemon status     # check whether the service is running (also the de
 muslimtify daemon uninstall  # stop and remove the background service
 ```
 
-On Linux the daemon is registered with systemd. Run `muslimtify daemon status` after installing to confirm it is active.
+Run `muslimtify daemon status` after installing to confirm it is active. What `install` registers depends on the platform:
+
+| Platform | Mechanism | Where |
+| --- | --- | --- |
+| Linux | A systemd user service, `muslimtify.service` | `$XDG_CONFIG_HOME/systemd/user/`, or `~/.config/systemd/user/` when `XDG_CONFIG_HOME` is unset |
+| Windows | A Task Scheduler task named `muslimtify` that runs the check every minute in the interactive session | Task Scheduler library |
+
+A unit or task that a distribution package installed is reported as installed too, so `daemon status` is the right check whichever way Muslimtify arrived on the machine.
 
 ## Other commands
 
@@ -499,3 +510,24 @@ On Linux the daemon is registered with systemd. Run `muslimtify daemon status` a
 muslimtify version   # show version information
 muslimtify help      # show the top-level help message
 ```
+
+`version` also prints the calculation method in use:
+
+```
+Muslimtify v0.4.4
+Prayer Time Notification Daemon
+
+Method: kemenag (KEMENAG, Indonesia)
+```
+
+## Commands removed in earlier versions
+
+The command line was redesigned before v0.4. The old spellings are still recognised, but only to print the replacement and exit with an error, so an old script fails loudly instead of silently doing something else.
+
+| Old | Use instead |
+| --- | --- |
+| `show --format json` | `show --json` |
+| `show --no-header` | `show --headless` |
+| `location show` | `location` (optionally `--json` / `--headless`) |
+| `location refresh` | `location set --auto` |
+| `location clear` | `location set --auto` |
