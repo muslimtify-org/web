@@ -1,6 +1,6 @@
 ---
-title: Omarchy plugin
-sidebar_position: 5
+title: Omarchy
+sidebar_position: 1
 ---
 
 # Omarchy plugin
@@ -12,7 +12,7 @@ The [muslimtify-omarchy](https://github.com/muslimtify-org/muslimtify-omarchy) p
 ## Requirements
 
 - Omarchy, with its Quickshell-based shell.
-- Muslimtify installed and on your `PATH`. See [Get Started](./get-started.md).
+- Muslimtify installed and on your `PATH`. See [Get Started](../get-started.md).
 
 The plugin reads your Muslimtify config and changes it only through the `muslimtify` CLI. Notifications still come from the Muslimtify daemon, so check that it is running:
 
@@ -78,7 +78,7 @@ Changes save right away. Toggles and dropdowns apply when you change them, and t
 
 Changing the coordinates switches the location to manual, clears the city and country, and sets the timezone from the new coordinates. Set the city and country again afterwards if you want them.
 
-See [Configuration](./configuration.md) for what each setting does.
+See [Configuration](../configuration.md) for what each setting does.
 
 ### Keys
 

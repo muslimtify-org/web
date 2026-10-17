@@ -164,4 +164,5 @@ every prayer.
 
 - [Configuration](./configuration.md): tune location, method, madzhab, reminders, and sounds.
 - [Command reference](./command.md): every CLI command with examples.
+- [Plugins](./plugin/omarchy.md): Muslimtify on the Omarchy or Hyprsimple bar.
 - [Troubleshooting](./troubleshooting.md): fixes for notifications, location, and the daemon.

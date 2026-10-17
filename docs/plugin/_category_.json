@@ -1,0 +1,11 @@
+{
+  "label": "Plugins",
+  "position": 5,
+  "collapsible": true,
+  "collapsed": false,
+  "link": {
+    "type": "generated-index",
+    "title": "Plugins",
+    "description": "Integrations that put Muslimtify on your desktop bar. Each plugin shows the next prayer, opens a panel with today's schedule, and edits Muslimtify's own settings through the muslimtify CLI."
+  }
+}
