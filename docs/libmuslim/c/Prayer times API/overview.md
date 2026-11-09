@@ -102,7 +102,7 @@ cc your_app.c -lm -o your_app
 
 ## License
 
-libmuslim is released under the MIT License, the same as Muslimtify itself. You
+libmuslim is released under the MIT License. Muslimtify itself is GPLv3. You
 are free to use it in open-source and commercial projects. The source lives at
 [github.com/muslimtify-org/libmuslim](https://github.com/muslimtify-org/libmuslim).
 

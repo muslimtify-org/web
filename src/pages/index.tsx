@@ -159,7 +159,7 @@ function Hero() {
             </Link>
           </div>
           <p className={styles.heroNote}>
-            Free &amp; open source <span className={styles.dot}>·</span> MIT licensed{' '}
+            Free &amp; open source <span className={styles.dot}>·</span> GPLv3 licensed{' '}
             <span className={styles.dot}>·</span> Written in C
           </p>
         </div>
@@ -356,7 +356,7 @@ function Community() {
           <div className={styles.sectionHead} style={{marginBottom: 0}}>
             <Heading as="h2">Built in the open, by and for the ummah</Heading>
             <p>
-              Muslimtify is free software under the MIT license. Everything from the
+              Muslimtify is free software under the GPLv3 license. Everything from the
               prayer-time math to this website is public and open to changes.
             </p>
           </div>
