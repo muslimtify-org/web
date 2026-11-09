@@ -116,7 +116,7 @@ const config: Config = {
         {label: 'Issues', href: 'https://github.com/rizukirr/muslimtify/issues'},
         {label: 'libmuslim', href: 'https://github.com/rizukirr/libmuslim'},
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Muslimtify. MIT License.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Muslimtify. GPLv3 License.`,
     },
     prism: {
       theme: prismThemes.github,

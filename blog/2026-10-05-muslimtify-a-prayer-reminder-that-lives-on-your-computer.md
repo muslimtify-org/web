@@ -168,7 +168,7 @@ Reliability gets the same attention as features. The project has 18 test suites 
 
 ## Open source, and yours to share
 
-Muslimtify is open source under the MIT License. Anyone can read the code, check what it does with their location, and improve it. The code lives at [github.com/muslimtify-org/muslimtify](https://github.com/muslimtify-org/muslimtify) and the documentation at [muslimtify.org](https://www.muslimtify.org).
+Muslimtify is open source under the GNU General Public License v3 (GPLv3). Anyone can read the code, check what it does with their location, and improve it. The code lives at [github.com/muslimtify-org/muslimtify](https://github.com/muslimtify-org/muslimtify) and the documentation at [muslimtify.org](https://www.muslimtify.org).
 
 If Muslimtify helps you catch a prayer you would have missed, please share it with someone who spends their day at a computer. If something does not work, tell me through GitHub Issues. And if you can write code, translate, or test on a device I do not own, you are welcome to join.
 
