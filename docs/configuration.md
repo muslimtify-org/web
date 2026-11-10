@@ -134,20 +134,24 @@ Each of the five prescribed prayers can be enabled or disabled, and given a per-
   "adhan": "",
   "adhan_enabled": true,
   "reminders": [30, 15, 5],
+  "after_reminders": [],
   "offset": 0
 }
 ```
 
 ## Notifications and reminders
 
-Reminders are the minutes-before-Adhan nudges, up to 10 per prayer. Configure them per prayer or for all prayers at once:
+Reminders are the minutes-before-Adhan nudges, up to 10 per prayer. After-reminders fire a number of minutes after the Adhan, for example to leave for the congregation, also up to 10 per prayer and empty by default. Configure either per prayer or for all prayers at once:
 
 ```bash
 muslimtify notification --reminder --all 30 15 5   # set reminders for every prayer
 muslimtify notification --reminder fajr 30 15 5    # set reminders for a single prayer
+muslimtify notification --after dhuhr 10           # remind 10 minutes after the Dhuhr adhan
 muslimtify notification                            # show current notification settings
 muslimtify notification test                       # send a test notification now
 ```
+
+They are stored per prayer as `reminders` and `after_reminders`. See [Reminders after the Adhan](./command.md#reminders-after-the-adhan) for how after-reminders behave.
 
 `notification test` sends the notification for the next upcoming prayer straight away, using its real time, urgency and sound, so you can confirm your setup works without waiting. See [Send a test notification](./command.md#send-a-test-notification).
 
@@ -167,7 +171,7 @@ icon:
 
 ## Adhan and sounds
 
-Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per prayer with `adhan_enabled`, and point `adhan` at a custom sound file to override the default for that prayer. An empty `adhan` uses the Adhan bundled with Muslimtify. The global `sound`, `sound_alarm`, and `sound_reminder` keys in the `notification` block set the defaults.
+Each prayer can play a full Adhan or a gentle reminder chime. Toggle audio per prayer with `adhan_enabled`, and point `adhan` at a custom sound file to override the default for that prayer. An empty `adhan` uses the Adhan bundled with Muslimtify. The global `sound`, `sound_alarm`, and `sound_reminder` keys in the `notification` block set the defaults. `sound_reminder` applies to reminders both before and after the Adhan.
 
 ```bash
 muslimtify notification --adhan enable maghrib          # play the adhan for Maghrib
@@ -198,11 +202,11 @@ muslimtify notification test --adhan                    # hear it without waitin
     "country": ""
   },
   "prayers": {
-    "fajr":    { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
-    "dhuhr":   { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
-    "asr":     { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
-    "maghrib": { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 },
-    "isha":    { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "offset": 0 }
+    "fajr":    { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "after_reminders": [], "offset": 0 },
+    "dhuhr":   { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "after_reminders": [], "offset": 0 },
+    "asr":     { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "after_reminders": [], "offset": 0 },
+    "maghrib": { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "after_reminders": [], "offset": 0 },
+    "isha":    { "enabled": true,  "adhan": "", "adhan_enabled": true,  "reminders": [30, 15, 5], "after_reminders": [], "offset": 0 }
   },
   "notification": {
     "timeout": 5000,

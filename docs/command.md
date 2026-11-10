@@ -49,6 +49,8 @@ The table lists every prayer with its date, time, whether notifications are enab
 +------------+------------+----------+----------+-----------------------+
 ```
 
+A prayer with [reminders after the Adhan](#reminders-after-the-adhan) lists them after a slash with a plus sign, for example `30,15,5 / +10 min`. A list too wide for the column is shown as a count, such as `4 reminders`.
+
 `--headless` prints a `date=` line, then one `<prayer>=<time>` line for each **enabled** prayer. Disabled prayers are left out.
 
 ```
@@ -70,31 +72,36 @@ isha=19:01
       "time": "04:31",
       "offset": 0,
       "enabled": true,
-      "reminders": [30, 15, 5]
+      "reminders": [30, 15, 5],
+      "after_reminders": []
     },
     "dhuhr": {
       "time": "11:50",
       "offset": 0,
       "enabled": true,
-      "reminders": [30, 15, 5]
+      "reminders": [30, 15, 5],
+      "after_reminders": []
     },
     "asr": {
       "time": "15:04",
       "offset": 0,
       "enabled": true,
-      "reminders": [30, 15, 5]
+      "reminders": [30, 15, 5],
+      "after_reminders": []
     },
     "maghrib": {
       "time": "17:52",
       "offset": 0,
       "enabled": true,
-      "reminders": [30, 15, 5]
+      "reminders": [30, 15, 5],
+      "after_reminders": []
     },
     "isha": {
       "time": "19:01",
       "offset": 0,
       "enabled": true,
-      "reminders": [30, 15, 5]
+      "reminders": [30, 15, 5],
+      "after_reminders": []
     }
   }
 }
@@ -429,6 +436,19 @@ muslimtify notification --reminder fajr none      # clear Fajr's reminders (clea
 
 With no reminders a prayer still notifies once, when it is time to pray.
 
+### Reminders after the Adhan
+
+Set reminders that fire a number of minutes **after** the Adhan, for example when your mosque holds the congregation (jama'ah) some time after the Adhan. The prayer time, the Adhan and the reminders before it stay as they are. The limits match `--reminder`: each value is minutes from 1 to 1440, and a prayer holds at most 10.
+
+```bash
+muslimtify notification --after dhuhr 10     # remind 10 minutes after the Dhuhr adhan
+muslimtify notification --after --all 10     # the same for every prayer
+muslimtify notification --after fajr 15 5    # several values for one prayer
+muslimtify notification --after dhuhr none   # clear Dhuhr's after-reminders (clear also works)
+```
+
+After-reminders are off by default. Each call replaces the prayer's whole list, and `muslimtify notification` shows them in the `After` column. The notification reads `Dhuhr started 10 minutes ago`. A reminder before the Adhan is dropped once its prayer has started, but an after-reminder missed while the computer was asleep still fires if it is at most 15 minutes late. It uses the same sound as the other reminders, and `--sound off` silences it too.
+
 ### Urgency
 
 Set the desktop notification urgency level.
@@ -484,6 +504,8 @@ muslimtify offset fajr +4    # shift Fajr 4 minutes later
 muslimtify offset asr -2     # shift Asr 2 minutes earlier
 muslimtify offset all 0      # reset the offset for every prayer
 ```
+
+An offset moves the prayer time itself, so the displayed time, the Adhan and every reminder move with it. To be reminded after the Adhan without changing the prayer time, use [`notification --after`](#reminders-after-the-adhan) instead.
 
 ## `muslimtify daemon`
 
